@@ -271,7 +271,173 @@
     </div>
 
 
-    <!-- ADMIN JAVASCRIPT -->
+    <!-- ================================
+         SUBMISSION MODAL
+    ================================= -->
+
+    <div
+        class="modal-overlay"
+        id="submissionModal"
+        style="display: none;"
+    >
+
+        <div class="submission-modal">
+
+            <button
+                class="modal-close"
+                id="modalClose"
+                type="button"
+                aria-label="Close"
+            >
+                ✕
+            </button>
+
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-small">
+                        FOLLOWER SUBMISSION
+                    </span>
+
+                    <h2 id="modalTitle">
+                        Submission
+                    </h2>
+
+                </div>
+
+
+                <span
+                    id="modalStatus"
+                    class="status"
+                >
+                    New
+                </span>
+
+            </div>
+
+
+            <div class="modal-content">
+
+
+                <!-- SITUATION -->
+
+                <div class="modal-field">
+
+                    <div class="modal-label">
+                        Situation
+                    </div>
+
+                    <div
+                        id="modalSituation"
+                        class="modal-value"
+                    ></div>
+
+                </div>
+
+
+                <!-- FEELING -->
+
+                <div class="modal-field">
+
+                    <div class="modal-label">
+                        Feeling
+                    </div>
+
+                    <div
+                        id="modalFeeling"
+                        class="modal-value"
+                    ></div>
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div class="modal-field">
+
+                    <div class="modal-label">
+                        Message
+                    </div>
+
+                    <div
+                        id="modalMessage"
+                        class="modal-value modal-message"
+                    ></div>
+
+                </div>
+
+
+                <!-- META INFORMATION -->
+
+                <div class="modal-meta">
+
+
+                    <div>
+
+                        <span>
+                            Name
+                        </span>
+
+                        <strong id="modalName">
+                            Anonymous
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Instagram
+                        </span>
+
+                        <strong id="modalInstagram">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Permission
+                        </span>
+
+                        <strong id="modalPermission">
+                            Yes
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Submitted
+                        </span>
+
+                        <strong id="modalDate">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         ADMIN JAVASCRIPT
+    ================================= -->
 
     <script src="admin.js"></script>
 
