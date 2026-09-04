@@ -548,7 +548,7 @@ function createSubmissionCard(item) {
 }
 
 // ==========================================
-// OPEN SUBMISSION
+// OPEN SUBMISSION MODAL
 // ==========================================
 
 function openSubmission(id) {
@@ -562,39 +562,63 @@ function openSubmission(id) {
         return;
     }
 
+
     const status = submission.status || "new";
 
     const date = submission.created_at
         ? new Date(submission.created_at).toLocaleString("en-IN")
         : "Unknown";
 
-    alert(
-        "📝 SUBMISSION #" + submission.id +
 
-        "\n\nSITUATION\n" +
-        (submission.situation || "—") +
+    // Fill modal data
 
-        "\n\nFEELING\n" +
-        (submission.feeling || "—") +
+    document.getElementById("modalTitle").textContent =
+        `Submission #${submission.id}`;
 
-        "\n\nMESSAGE\n" +
-        (submission.message || "—") +
 
-        "\n\nNAME\n" +
-        (submission.name || "Anonymous") +
+    document.getElementById("modalSituation").textContent =
+        submission.situation || "—";
 
-        "\n\nINSTAGRAM\n" +
-        (submission.instagram || "—") +
 
-        "\n\nPERMISSION\n" +
-        (submission.permission ? "Yes" : "No") +
+    document.getElementById("modalFeeling").textContent =
+        submission.feeling || "—";
 
-        "\n\nSTATUS\n" +
-        status +
 
-        "\n\nSUBMITTED\n" +
-        date
-    );
+    document.getElementById("modalMessage").textContent =
+        submission.message || "—";
+
+
+    document.getElementById("modalName").textContent =
+        submission.name || "Anonymous";
+
+
+    document.getElementById("modalInstagram").textContent =
+        submission.instagram || "—";
+
+
+    document.getElementById("modalPermission").textContent =
+        submission.permission ? "Yes" : "No";
+
+
+    document.getElementById("modalDate").textContent =
+        date;
+
+
+    // Status
+
+    const modalStatus =
+        document.getElementById("modalStatus");
+
+    modalStatus.textContent = status;
+
+    modalStatus.className =
+        `status status-${status}`;
+
+
+    // Show modal
+
+    document.getElementById("submissionModal").style.display =
+        "flex";
 }
 // ==========================================
 // CHANGE STATUS
@@ -666,7 +690,33 @@ async function changeStatus(id, newStatus) {
         );
     }
 }
+// ==========================================
+// CLOSE SUBMISSION MODAL
+// ==========================================
 
+const submissionModal =
+    document.getElementById("submissionModal");
+
+const modalClose =
+    document.getElementById("modalClose");
+
+
+modalClose.addEventListener("click", function () {
+
+    submissionModal.style.display = "none";
+
+});
+
+
+submissionModal.addEventListener("click", function (event) {
+
+    if (event.target === submissionModal) {
+
+        submissionModal.style.display = "none";
+
+    }
+
+});
 
 // ==========================================
 // FILTER BUTTONS
