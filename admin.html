@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <meta
         name="description"
@@ -11,16 +17,25 @@
 
     <title>Admin — Manasulo Maata</title>
 
-    <link rel="stylesheet" href="admin.css">
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+
 </head>
+
 
 <body>
 
-    <!-- ================================
-         ADMIN LOGIN
-    ================================= -->
 
-    <div class="login-page" id="loginPage">
+    <!-- ==========================================
+         LOGIN PAGE
+    =========================================== -->
+
+    <div
+        class="login-page"
+        id="loginPage"
+    >
 
         <div class="login-box">
 
@@ -73,14 +88,16 @@
     </div>
 
 
-    <!-- ================================
-         ADMIN DASHBOARD
-    ================================= -->
+
+    <!-- ==========================================
+         DASHBOARD
+    =========================================== -->
 
     <div
         class="dashboard"
         id="dashboard"
     >
+
 
         <!-- TOP BAR -->
 
@@ -110,12 +127,13 @@
         </header>
 
 
+
         <!-- MAIN -->
 
         <main class="container">
 
 
-            <!-- HEADING -->
+            <!-- DASHBOARD HEADING -->
 
             <div class="dashboard-heading">
 
@@ -143,10 +161,12 @@
             </div>
 
 
-            <!-- STATISTICS -->
+
+            <!-- ======================================
+                 STATISTICS
+            ======================================= -->
 
             <div class="stats">
-
 
                 <div class="stat-card">
 
@@ -202,7 +222,68 @@
             </div>
 
 
-            <!-- FILTERS -->
+
+            <!-- ======================================
+                 WRITER QUEUE
+            ======================================= -->
+
+            <section class="writer-queue-section">
+
+
+                <div class="writer-queue-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            WRITER WORKSPACE
+                        </span>
+
+                        <h2>
+                            ✍️ Writer Queue
+                        </h2>
+
+                        <p>
+                            Selected follower maatalu waiting to become
+                            original Manasulo Maata posts.
+                        </p>
+
+                    </div>
+
+
+                    <div class="queue-count">
+
+                        <span>
+                            Queue
+                        </span>
+
+                        <strong id="writerQueueCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div
+                    id="writerQueue"
+                    class="writer-queue"
+                >
+
+                    <div class="queue-empty">
+                        No selected submissions in the writer queue.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ======================================
+                 FILTERS
+            ======================================= -->
 
             <div class="filters">
 
@@ -214,7 +295,6 @@
                     All
                 </button>
 
-
                 <button
                     class="filter"
                     data-status="new"
@@ -222,7 +302,6 @@
                 >
                     New
                 </button>
-
 
                 <button
                     class="filter"
@@ -232,7 +311,6 @@
                     Selected
                 </button>
 
-
                 <button
                     class="filter"
                     data-status="rejected"
@@ -240,7 +318,6 @@
                 >
                     Rejected
                 </button>
-
 
                 <button
                     class="filter"
@@ -253,7 +330,10 @@
             </div>
 
 
-            <!-- SUBMISSIONS -->
+
+            <!-- ======================================
+                 SUBMISSIONS
+            ======================================= -->
 
             <div
                 id="submissions"
@@ -266,14 +346,16 @@
 
             </div>
 
+
         </main>
 
     </div>
 
 
-    <!-- ================================
+
+    <!-- ==========================================
          SUBMISSION MODAL
-    ================================= -->
+    =========================================== -->
 
     <div
         class="modal-overlay"
@@ -282,6 +364,9 @@
     >
 
         <div class="submission-modal">
+
+
+            <!-- CLOSE -->
 
             <button
                 class="modal-close"
@@ -292,6 +377,9 @@
                 ✕
             </button>
 
+
+
+            <!-- MODAL HEADER -->
 
             <div class="modal-header">
 
@@ -318,6 +406,9 @@
             </div>
 
 
+
+            <!-- MODAL CONTENT -->
+
             <div class="modal-content">
 
 
@@ -337,6 +428,7 @@
                 </div>
 
 
+
                 <!-- FEELING -->
 
                 <div class="modal-field">
@@ -351,6 +443,7 @@
                     ></div>
 
                 </div>
+
 
 
                 <!-- MESSAGE -->
@@ -369,11 +462,13 @@
                 </div>
 
 
-                <!-- =================================
+
+                <!-- ==================================
                      WRITER SECTION
-                ================================== -->
+                =================================== -->
 
                 <div class="writer-section">
+
 
                     <div class="writer-header">
 
@@ -387,9 +482,15 @@
                                 ✍️ Original Manasulo Maata
                             </h3>
 
+                            <p class="writer-description">
+                                Transform the follower's feeling into
+                                an original Manasulo Maata.
+                            </p>
+
                         </div>
 
                     </div>
+
 
 
                     <textarea
@@ -400,13 +501,28 @@
                     ></textarea>
 
 
-                    <button
-                        id="saveQuoteBtn"
-                        class="save-quote-btn"
-                        type="button"
-                    >
-                        Save Quote 🖤
-                    </button>
+
+                    <div class="writer-actions">
+
+                        <button
+                            id="saveQuoteBtn"
+                            class="save-quote-btn"
+                            type="button"
+                        >
+                            💾 Save Quote
+                        </button>
+
+
+                        <button
+                            id="markPostedBtn"
+                            class="mark-posted-btn"
+                            type="button"
+                        >
+                            🟢 Mark as Posted
+                        </button>
+
+                    </div>
+
 
 
                     <p
@@ -418,10 +534,12 @@
                 </div>
 
 
-                <!-- META INFORMATION -->
+
+                <!-- ==================================
+                     META
+                =================================== -->
 
                 <div class="modal-meta">
-
 
                     <div>
 
@@ -474,8 +592,8 @@
 
                     </div>
 
-
                 </div>
+
 
             </div>
 
@@ -484,11 +602,13 @@
     </div>
 
 
-    <!-- ================================
-         ADMIN JAVASCRIPT
-    ================================= -->
+
+    <!-- ==========================================
+         JAVASCRIPT
+    =========================================== -->
 
     <script src="admin.js"></script>
 
 </body>
+
 </html>
