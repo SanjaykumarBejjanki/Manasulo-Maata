@@ -511,6 +511,11 @@ function createSubmissionCard(item) {
 
 
             <div class="actions">
+            <button
+    class="action-btn"
+    onclick="openSubmission(${item.id})">
+    📝 Open Submission
+</button>
 
                 <button
                     class="action-btn action-selected"
@@ -542,7 +547,55 @@ function createSubmissionCard(item) {
     `;
 }
 
+// ==========================================
+// OPEN SUBMISSION
+// ==========================================
 
+function openSubmission(id) {
+
+    const submission = allSubmissions.find(
+        item => item.id === id
+    );
+
+    if (!submission) {
+        alert("Submission not found.");
+        return;
+    }
+
+    const status = submission.status || "new";
+
+    const date = submission.created_at
+        ? new Date(submission.created_at).toLocaleString("en-IN")
+        : "Unknown";
+
+    alert(
+        "📝 SUBMISSION #" + submission.id +
+
+        "\n\nSITUATION\n" +
+        (submission.situation || "—") +
+
+        "\n\nFEELING\n" +
+        (submission.feeling || "—") +
+
+        "\n\nMESSAGE\n" +
+        (submission.message || "—") +
+
+        "\n\nNAME\n" +
+        (submission.name || "Anonymous") +
+
+        "\n\nINSTAGRAM\n" +
+        (submission.instagram || "—") +
+
+        "\n\nPERMISSION\n" +
+        (submission.permission ? "Yes" : "No") +
+
+        "\n\nSTATUS\n" +
+        status +
+
+        "\n\nSUBMITTED\n" +
+        date
+    );
+}
 // ==========================================
 // CHANGE STATUS
 // ==========================================
