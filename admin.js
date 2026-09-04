@@ -11,22 +11,30 @@ const SUPABASE_KEY =
     "sb_publishable_pfHA9_9H8mLybs4UHbh04Q_y2rgj2SK";
 
 
+/* =========================================
+   DOM
+========================================= */
 
-// ==========================================
-// ELEMENTS
-// ==========================================
+const loginSection =
+    document.getElementById("loginSection");
 
-const loginPage =
-    document.getElementById("loginPage");
-
-const dashboard =
-    document.getElementById("dashboard");
+const dashboardSection =
+    document.getElementById("dashboardSection");
 
 const loginForm =
     document.getElementById("loginForm");
 
-const loginError =
-    document.getElementById("loginError");
+const loginBtn =
+    document.getElementById("loginBtn");
+
+const loginMessage =
+    document.getElementById("loginMessage");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
 
 const logoutBtn =
     document.getElementById("logoutBtn");
@@ -35,7 +43,10 @@ const refreshBtn =
     document.getElementById("refreshBtn");
 
 const submissionsContainer =
-    document.getElementById("submissions");
+    document.getElementById("submissionsContainer");
+
+const emptyState =
+    document.getElementById("emptyState");
 
 const writerQueue =
     document.getElementById("writerQueue");
@@ -43,11 +54,35 @@ const writerQueue =
 const writerQueueCount =
     document.getElementById("writerQueueCount");
 
+const readyQueue =
+    document.getElementById("readyQueue");
 
 
-// ==========================================
-// MODAL ELEMENTS
-// ==========================================
+/* Stats */
+
+const newCount =
+    document.getElementById("newCount");
+
+const selectedCount =
+    document.getElementById("selectedCount");
+
+const writingCount =
+    document.getElementById("writingCount");
+
+const writtenCount =
+    document.getElementById("writtenCount");
+
+const instagramReadyCount =
+    document.getElementById("instagramReadyCount");
+
+const postedCount =
+    document.getElementById("postedCount");
+
+const rejectedCount =
+    document.getElementById("rejectedCount");
+
+
+/* Modal */
 
 const submissionModal =
     document.getElementById("submissionModal");
@@ -55,23 +90,55 @@ const submissionModal =
 const modalClose =
     document.getElementById("modalClose");
 
-const saveQuoteBtn =
-    document.getElementById("saveQuoteBtn");
+const modalTitle =
+    document.getElementById("modalTitle");
 
-const markPostedBtn =
-    document.getElementById("markPostedBtn");
+const modalStatus =
+    document.getElementById("modalStatus");
+
+const modalSituation =
+    document.getElementById("modalSituation");
+
+const modalFeeling =
+    document.getElementById("modalFeeling");
+
+const modalMessage =
+    document.getElementById("modalMessage");
 
 const modalOriginalQuote =
     document.getElementById("modalOriginalQuote");
+
+const modalName =
+    document.getElementById("modalName");
+
+const modalInstagram =
+    document.getElementById("modalInstagram");
+
+const modalPermission =
+    document.getElementById("modalPermission");
+
+const modalDate =
+    document.getElementById("modalDate");
+
+const startWritingBtn =
+    document.getElementById("startWritingBtn");
+
+const saveQuoteBtn =
+    document.getElementById("saveQuoteBtn");
+
+const markPostReadyBtn =
+    document.getElementById("markPostReadyBtn");
+
+const markPostedBtn =
+    document.getElementById("markPostedBtn");
 
 const quoteSaveMessage =
     document.getElementById("quoteSaveMessage");
 
 
-
-// ==========================================
-// DATA
-// ==========================================
+/* =========================================
+   STATE
+========================================= */
 
 let allSubmissions = [];
 
@@ -80,80 +147,66 @@ let currentFilter = "all";
 let currentSubmissionId = null;
 
 
-
-// ==========================================
-// SUPABASE REQUEST
-// ==========================================
+/* =========================================
+   SUPABASE REQUEST
+========================================= */
 
 async function supabaseRequest(
     endpoint,
-    options = {}
+    options = {},
+    accessToken = null
 ) {
+
+    const headers = {
+        apikey: SUPABASE_KEY,
+        "Content-Type": "application/json",
+        ...options.headers
+    };
+
+    if (accessToken) {
+        headers.Authorization =
+            `Bearer ${accessToken}`;
+    }
 
     const response =
         await fetch(
-            `${SUPABASE_URL}/rest/v1/${endpoint}`,
+            `${SUPABASE_URL}${endpoint}`,
             {
                 ...options,
-
-                headers: {
-
-                    "apikey":
-                        SUPABASE_KEY,
-
-                    "Authorization":
-                        options.headers?.Authorization ||
-                        `Bearer ${SUPABASE_KEY}`,
-
-                    "Content-Type":
-                        "application/json",
-
-                    ...(options.headers || {})
-                }
+                headers
             }
         );
 
+    const text =
+        await response.text();
+
+    let data = null;
+
+    try {
+        data = text ? JSON.parse(text) : null;
+    } catch {
+        data = text;
+    }
 
     if (!response.ok) {
 
-        let error;
+        const errorMessage =
+            data?.message ||
+            data?.error_description ||
+            data?.hint ||
+            text ||
+            "Supabase request failed.";
 
-        try {
-
-            error =
-                await response.json();
-
-        } catch {
-
-            error = {
-                message:
-                    "Unknown error"
-            };
-        }
-
-
-        console.error(
-            "Supabase error:",
-            error
-        );
-
-
-        throw new Error(
-            error.message ||
-            error.hint ||
-            "Supabase request failed"
-        );
+        throw new Error(errorMessage);
     }
 
-
-    return response;
+    return data;
 }
 
 
-
-// ==========================================
-// LOGIN
-// ==========================================
+/* =========================================
+   LOGIN
+========================================= */
 
 loginForm.addEventListener(
     "submit",
@@ -161,610 +214,371 @@ loginForm.addEventListener(
 
         event.preventDefault();
 
-
         const email =
-            document
-                .getElementById("email")
-                .value
-                .trim();
-
+            emailInput.value.trim();
 
         const password =
-            document
-                .getElementById("password")
-                .value;
+            passwordInput.value;
 
+        if (!email || !password) {
+            return;
+        }
 
-        loginError.textContent = "";
+        loginBtn.disabled = true;
 
-
-        const button =
-            loginForm.querySelector(
-                "button"
-            );
-
-
-        button.disabled = true;
-
-        button.textContent =
+        loginBtn.textContent =
             "Logging in...";
 
+        loginMessage.textContent = "";
 
         try {
 
-            const response =
-                await fetch(
-                    `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+            const data =
+                await supabaseRequest(
+                    "/auth/v1/token?grant_type=password",
                     {
                         method: "POST",
-
-                        headers: {
-
-                            "apikey":
-                                SUPABASE_KEY,
-
-                            "Content-Type":
-                                "application/json"
-                        },
-
                         body: JSON.stringify({
-
-                            email:
-                                email,
-
-                            password:
-                                password
+                            email,
+                            password
                         })
                     }
                 );
 
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
+            if (!data?.access_token) {
                 throw new Error(
-                    data.error_description ||
-                    data.msg ||
-                    "Invalid login details"
+                    "Login failed."
                 );
             }
 
+            const isAdmin =
+                await verifyAdmin(
+                    data.access_token
+                );
 
-            // ==================================
-            // SAVE SESSION
-            // ==================================
+            if (!isAdmin) {
+
+                throw new Error(
+                    "This account is not an admin."
+                );
+            }
 
             localStorage.setItem(
-                "manasulo_admin_access_token",
+                "mm_access_token",
                 data.access_token
             );
 
+            if (data.refresh_token) {
 
-            localStorage.setItem(
-                "manasulo_admin_refresh_token",
-                data.refresh_token
-            );
-
-
-            // ==================================
-            // VERIFY ADMIN
-            // ==================================
-
-            await verifyAdmin(
-                data.access_token
-            );
-
+                localStorage.setItem(
+                    "mm_refresh_token",
+                    data.refresh_token
+                );
+            }
 
             showDashboard();
 
-
         } catch (error) {
 
-            console.error(
-                "Login error:",
-                error
-            );
+            console.error(error);
 
-
-            loginError.textContent =
+            loginMessage.textContent =
                 error.message ||
-                "Login failed. Please try again.";
-
+                "Login failed.";
 
         } finally {
 
-            button.disabled = false;
+            loginBtn.disabled = false;
 
-            button.textContent =
-                "Login 🖤";
+            loginBtn.textContent =
+                "Login";
         }
-
     }
 );
 
 
+/* =========================================
+   VERIFY ADMIN
+========================================= */
 
-// ==========================================
-// VERIFY ADMIN
-// ==========================================
-
-async function verifyAdmin(
-    accessToken
-) {
-
-    const response =
-        await fetch(
-            `${SUPABASE_URL}/rest/v1/admins?select=user_id`,
-            {
-                method: "GET",
-
-                headers: {
-
-                    "apikey":
-                        SUPABASE_KEY,
-
-                    "Authorization":
-                        `Bearer ${accessToken}`,
-
-                    "Content-Type":
-                        "application/json"
-                }
-            }
-        );
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Unable to verify admin."
-        );
-    }
-
-
-    const admins =
-        await response.json();
-
-
-    const userResponse =
-        await fetch(
-            `${SUPABASE_URL}/auth/v1/user`,
-            {
-                headers: {
-
-                    "apikey":
-                        SUPABASE_KEY,
-
-                    "Authorization":
-                        `Bearer ${accessToken}`
-                }
-            }
-        );
-
-
-    if (!userResponse.ok) {
-
-        throw new Error(
-            "Unable to verify user."
-        );
-    }
-
+async function verifyAdmin(accessToken) {
 
     const user =
-        await userResponse.json();
-
-
-    const isAdmin =
-        admins.some(
-            admin =>
-                admin.user_id === user.id
+        await supabaseRequest(
+            "/auth/v1/user",
+            {
+                method: "GET"
+            },
+            accessToken
         );
 
-
-    if (!isAdmin) {
-
-        localStorage.removeItem(
-            "manasulo_admin_access_token"
-        );
-
-
-        localStorage.removeItem(
-            "manasulo_admin_refresh_token"
-        );
-
-
-        throw new Error(
-            "You are not authorized as an admin."
-        );
+    if (!user?.id) {
+        return false;
     }
 
+    const admins =
+        await supabaseRequest(
+            "/rest/v1/admins?select=user_id",
+            {
+                method: "GET"
+            },
+            accessToken
+        );
 
-    return true;
+    return admins.some(
+        admin =>
+            admin.user_id === user.id
+    );
 }
 
 
-
-// ==========================================
-// SHOW DASHBOARD
-// ==========================================
-
-function showDashboard() {
-
-    loginPage.style.display =
-        "none";
-
-
-    dashboard.style.display =
-        "block";
-
-
-    loadSubmissions();
-}
-
-
-
-// ==========================================
-// CHECK EXISTING SESSION
-// ==========================================
+/* =========================================
+   SESSION CHECK
+========================================= */
 
 async function checkExistingSession() {
 
     const token =
         localStorage.getItem(
-            "manasulo_admin_access_token"
+            "mm_access_token"
         );
-
 
     if (!token) {
         return;
     }
 
-
     try {
 
-        await verifyAdmin(
-            token
-        );
+        const isAdmin =
+            await verifyAdmin(token);
 
+        if (isAdmin) {
 
-        showDashboard();
+            showDashboard();
 
+        } else {
+
+            clearSession();
+        }
 
     } catch (error) {
 
-        console.log(
-            "No valid admin session."
-        );
+        console.error(error);
 
-
-        localStorage.removeItem(
-            "manasulo_admin_access_token"
-        );
-
-
-        localStorage.removeItem(
-            "manasulo_admin_refresh_token"
-        );
+        clearSession();
     }
 }
 
 
+/* =========================================
+   SHOW DASHBOARD
+========================================= */
 
-// ==========================================
-// LOAD SUBMISSIONS
-// ==========================================
+async function showDashboard() {
+
+    loginSection.classList.add(
+        "hidden"
+    );
+
+    dashboardSection.classList.remove(
+        "hidden"
+    );
+
+    await loadSubmissions();
+}
+
+
+/* =========================================
+   LOAD SUBMISSIONS
+========================================= */
 
 async function loadSubmissions() {
 
+    const token =
+        localStorage.getItem(
+            "mm_access_token"
+        );
+
+    if (!token) {
+        return;
+    }
+
     submissionsContainer.innerHTML =
         `
-        <div class="loading">
+        <div class="empty-state">
             Loading submissions...
         </div>
         `;
 
-
     try {
 
-        const token =
-            localStorage.getItem(
-                "manasulo_admin_access_token"
-            );
-
-
-        if (!token) {
-
-            throw new Error(
-                "Admin session expired."
-            );
-        }
-
-
-        const response =
-            await fetch(
-                `${SUPABASE_URL}/rest/v1/submissions?select=*&order=created_at.desc`,
-                {
-                    headers: {
-
-                        "apikey":
-                            SUPABASE_KEY,
-
-                        "Authorization":
-                            `Bearer ${token}`,
-
-                        "Content-Type":
-                            "application/json"
-                    }
-                }
-            );
-
-
-        if (!response.ok) {
-
-            let error;
-
-            try {
-
-                error =
-                    await response.json();
-
-            } catch {
-
-                error = {
-                    message:
-                        "Could not load submissions."
-                };
-            }
-
-
-            throw new Error(
-                error.message ||
-                "Could not load submissions."
-            );
-        }
-
-
         allSubmissions =
-            await response.json();
-
+            await supabaseRequest(
+                "/rest/v1/submissions?select=*&order=created_at.desc",
+                {
+                    method: "GET"
+                },
+                token
+            );
 
         updateStats();
 
         renderWriterQueue();
 
-        renderSubmissions();
+        renderReadyQueue();
 
+        renderSubmissions();
 
     } catch (error) {
 
-        console.error(
-            "Load submissions error:",
-            error
-        );
-
+        console.error(error);
 
         submissionsContainer.innerHTML =
             `
-            <div class="empty">
-                Unable to load submissions.
-                <br><br>
-                ${escapeHtml(error.message)}
+            <div class="empty-state">
+                <div class="empty-icon">⚠️</div>
+                <h3>Unable to load submissions</h3>
+                <p>${escapeHtml(error.message)}</p>
             </div>
             `;
-
-
-        writerQueue.innerHTML =
-            `
-            <div class="queue-empty">
-                Unable to load writer queue.
-            </div>
-            `;
-
-        writerQueueCount.textContent =
-            "0";
     }
 }
 
 
-
-// ==========================================
-// UPDATE STATISTICS
-// ==========================================
+/* =========================================
+   STATS
+========================================= */
 
 function updateStats() {
 
-    const newCount =
-        allSubmissions.filter(
-            item =>
-                !item.status ||
-                item.status === "new"
-        ).length;
+    const count =
+        status =>
+            allSubmissions.filter(
+                item =>
+                    item.status === status
+            ).length;
 
+    newCount.textContent =
+        count("new");
 
-    const selectedCount =
-        allSubmissions.filter(
-            item =>
-                item.status === "selected"
-        ).length;
+    selectedCount.textContent =
+        count("selected");
 
+    writingCount.textContent =
+        count("writing");
 
-    const rejectedCount =
-        allSubmissions.filter(
-            item =>
-                item.status === "rejected"
-        ).length;
+    writtenCount.textContent =
+        count("written");
 
+    instagramReadyCount.textContent =
+        count("instagram_ready");
 
-    const postedCount =
-        allSubmissions.filter(
-            item =>
-                item.status === "posted"
-        ).length;
+    postedCount.textContent =
+        count("posted");
 
-
-    document.getElementById(
-        "newCount"
-    ).textContent =
-        newCount;
-
-
-    document.getElementById(
-        "selectedCount"
-    ).textContent =
-        selectedCount;
-
-
-    document.getElementById(
-        "rejectedCount"
-    ).textContent =
-        rejectedCount;
-
-
-    document.getElementById(
-        "postedCount"
-    ).textContent =
-        postedCount;
+    rejectedCount.textContent =
+        count("rejected");
 }
 
 
-
-// ==========================================
-// WRITER QUEUE
-// ==========================================
+/* =========================================
+   WRITER QUEUE
+========================================= */
 
 function renderWriterQueue() {
 
-    const selectedSubmissions =
+    const queue =
         allSubmissions.filter(
             item =>
-                (item.status || "new") ===
-                "selected"
+                [
+                    "selected",
+                    "writing",
+                    "written"
+                ].includes(item.status)
         );
 
-
     writerQueueCount.textContent =
-        selectedSubmissions.length;
+        queue.length;
 
-
-    if (
-        selectedSubmissions.length ===
-        0
-    ) {
+    if (!queue.length) {
 
         writerQueue.innerHTML =
             `
-            <div class="queue-empty">
-                No selected submissions in the writer queue.
-                <br>
-                Select a follower maata below to send it here.
+            <div class="empty-state">
+                <div class="empty-icon">✍️</div>
+                <h3>Writer queue is empty</h3>
+                <p>Select a submission to start writing.</p>
             </div>
             `;
 
         return;
     }
 
-
     writerQueue.innerHTML =
-        selectedSubmissions
-            .map(
-                createWriterQueueItem
-            )
+        queue
+            .map(createWriterQueueItem)
             .join("");
 }
 
 
+/* =========================================
+   WRITER QUEUE ITEM
+========================================= */
 
-// ==========================================
-// CREATE WRITER QUEUE ITEM
-// ==========================================
+function createWriterQueueItem(item) {
 
-function createWriterQueueItem(
-    item
-) {
+    const quote =
+        item.original_quote?.trim();
 
-    const hasQuote =
-        Boolean(
-            item.original_quote &&
-            item.original_quote.trim()
-        );
-
-
-    const date =
-        item.created_at
-            ? new Date(
-                item.created_at
-            ).toLocaleString("en-IN")
-            : "Unknown";
-
+    const statusLabel =
+        getStatusLabel(item.status);
 
     return `
-        <article
-            class="writer-queue-item"
-        >
+        <div class="writer-queue-item">
 
-            <div class="queue-item-top">
+            <div class="queue-main">
 
-                <div class="queue-item-id">
-                    Submission #${item.id}
+                <div class="queue-top">
+
+                    <span class="status-badge status-${item.status}">
+                        ${statusLabel}
+                    </span>
+
+                    <span class="queue-id">
+                        #${item.id}
+                    </span>
+
+                    <span class="queue-feeling">
+                        ${escapeHtml(item.feeling || "")}
+                    </span>
+
+                </div>
+
+                <div class="queue-preview">
+                    ${escapeHtml(item.message || "")}
                 </div>
 
                 ${
-                    hasQuote
+                    quote
                         ? `
-                            <span class="queue-written">
-                                ✓ Written
-                            </span>
+                        <div class="queue-quote">
+                            ${escapeHtml(quote)}
+                        </div>
                         `
-                        : `
-                            <span class="queue-not-written">
-                                Not Written
-                            </span>
-                        `
+                        : ""
                 }
 
             </div>
 
 
-            <div class="queue-feeling">
-
-                <strong>
-                    Feeling:
-                </strong>
-
-                ${escapeHtml(
-                    item.feeling ||
-                    "—"
-                )}
-
-            </div>
-
-
-            <div class="queue-message">
-
-                ${escapeHtml(
-                    item.message ||
-                    "—"
-                )}
-
-            </div>
-
-
-            <div class="queue-item-bottom">
-
-                <span class="queue-date">
-                    ${escapeHtml(date)}
-                </span>
-
+            <div class="queue-actions">
 
                 <button
-                    class="queue-open-btn"
-                    type="button"
+                    class="action-btn write-btn"
                     onclick="openSubmission(${item.id})"
                 >
                     ${
-                        hasQuote
+                        quote
                             ? "✏️ Edit Quote"
                             : "✍️ Open & Write"
                     }
@@ -772,305 +586,266 @@ function createWriterQueueItem(
 
             </div>
 
-        </article>
+        </div>
     `;
 }
 
 
+/* =========================================
+   READY QUEUE
+========================================= */
 
-// ==========================================
-// RENDER SUBMISSIONS
-// ==========================================
+function renderReadyQueue() {
 
-function renderSubmissions() {
+    const ready =
+        allSubmissions.filter(
+            item =>
+                item.status ===
+                "instagram_ready"
+        );
 
-    let submissions =
-        allSubmissions;
+    if (!ready.length) {
 
-
-    if (
-        currentFilter !==
-        "all"
-    ) {
-
-        submissions =
-            submissions.filter(
-                item => {
-
-                    const status =
-                        item.status ||
-                        "new";
-
-
-                    return (
-                        status ===
-                        currentFilter
-                    );
-                }
-            );
-    }
-
-
-    if (
-        submissions.length ===
-        0
-    ) {
-
-        submissionsContainer.innerHTML =
+        readyQueue.innerHTML =
             `
-            <div class="empty">
-                No submissions found.
+            <div class="empty-state">
+                <div class="empty-icon">📸</div>
+                <h3>No post-ready quotes</h3>
+                <p>Written quotes will appear here.</p>
             </div>
             `;
 
         return;
     }
 
-
-    submissionsContainer.innerHTML =
-        submissions
-            .map(
-                createSubmissionCard
-            )
+    readyQueue.innerHTML =
+        ready
+            .map(createReadyQueueItem)
             .join("");
 }
 
 
+/* =========================================
+   READY QUEUE ITEM
+========================================= */
 
-// ==========================================
-// CREATE SUBMISSION CARD
-// ==========================================
-
-function createSubmissionCard(
-    item
-) {
-
-    const status =
-        item.status ||
-        "new";
-
-
-    const date =
-        item.created_at
-            ? new Date(
-                item.created_at
-            ).toLocaleString("en-IN")
-            : "Unknown";
-
-
-    const hasQuote =
-        Boolean(
-            item.original_quote &&
-            item.original_quote.trim()
-        );
-
+function createReadyQueueItem(item) {
 
     return `
-        <article
-            class="submission-card"
-        >
+        <div class="ready-queue-item">
 
-            <div
-                class="submission-header"
-            >
+            <div class="queue-main">
 
-                <div>
+                <div class="queue-top">
 
-                    <div
-                        class="submission-id"
-                    >
+                    <span class="status-badge status-instagram_ready">
+                        📸 Instagram Post Ready
+                    </span>
+
+                    <span class="queue-id">
                         #${item.id}
-                    </div>
-
-                    <div
-                        class="submission-date"
-                    >
-                        ${escapeHtml(date)}
-                    </div>
+                    </span>
 
                 </div>
 
+                <div class="queue-quote">
+                    ${escapeHtml(item.original_quote || "")}
+                </div>
 
-                <span
-                    class="status status-${escapeHtml(status)}"
+            </div>
+
+
+            <div class="queue-actions">
+
+                <button
+                    class="action-btn ready-btn"
+                    onclick="openSubmission(${item.id})"
                 >
-                    ${escapeHtml(status)}
+                    Open
+                </button>
+
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* =========================================
+   RENDER SUBMISSIONS
+========================================= */
+
+function renderSubmissions() {
+
+    let filtered =
+        allSubmissions;
+
+    if (currentFilter !== "all") {
+
+        filtered =
+            allSubmissions.filter(
+                item =>
+                    item.status ===
+                    currentFilter
+            );
+    }
+
+    if (!filtered.length) {
+
+        submissionsContainer.innerHTML =
+            "";
+
+        emptyState.classList.remove(
+            "hidden"
+        );
+
+        return;
+    }
+
+    emptyState.classList.add(
+        "hidden"
+    );
+
+    submissionsContainer.innerHTML =
+        filtered
+            .map(createSubmissionCard)
+            .join("");
+}
+
+
+/* =========================================
+   SUBMISSION CARD
+========================================= */
+
+function createSubmissionCard(item) {
+
+    const quote =
+        item.original_quote?.trim();
+
+    return `
+        <article class="submission-card">
+
+            <div class="submission-card-top">
+
+                <div>
+
+                    <span class="submission-id">
+                        Submission #${item.id}
+                    </span>
+
+                    <h3>
+                        ${escapeHtml(item.feeling || "No feeling")}
+                    </h3>
+
+                </div>
+
+                <span class="status-badge status-${item.status}">
+                    ${getStatusLabel(item.status)}
                 </span>
 
             </div>
 
 
-
-            <div class="field">
-
-                <div class="field-label">
-                    Situation
-                </div>
-
-                <div class="field-value">
-                    ${escapeHtml(
-                        item.situation ||
-                        "—"
-                    )}
-                </div>
-
+            <div class="submission-message-preview">
+                ${escapeHtml(item.message || "")}
             </div>
-
-
-
-            <div class="field">
-
-                <div class="field-label">
-                    Feeling
-                </div>
-
-                <div class="field-value">
-                    ${escapeHtml(
-                        item.feeling ||
-                        "—"
-                    )}
-                </div>
-
-            </div>
-
-
-
-            <div class="field">
-
-                <div class="field-label">
-                    Message
-                </div>
-
-                <div
-                    class="field-value message"
-                >
-                    ${escapeHtml(
-                        item.message ||
-                        "—"
-                    )}
-                </div>
-
-            </div>
-
 
 
             ${
-                hasQuote
+                quote
                     ? `
-                        <div class="field">
-
-                            <div class="field-label">
-                                Original Quote
-                            </div>
-
-                            <div class="field-value message">
-                                ${escapeHtml(
-                                    item.original_quote
-                                )}
-                            </div>
-
-                        </div>
+                    <div class="submission-quote-preview">
+                        ${escapeHtml(quote)}
+                    </div>
                     `
                     : ""
             }
 
 
-
-            <div class="meta">
-
-                <div class="meta-item">
-
-                    Name:
-
-                    <strong>
-                        ${escapeHtml(
-                            item.name ||
-                            "Anonymous"
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div class="meta-item">
-
-                    Instagram:
-
-                    <strong>
-                        ${escapeHtml(
-                            item.instagram ||
-                            "—"
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div class="meta-item">
-
-                    Permission:
-
-                    <strong>
-                        ${
-                            item.permission
-                                ? "Yes"
-                                : "No"
-                        }
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="actions">
-
+            <div class="submission-card-actions">
 
                 <button
-                    class="action-btn"
-                    type="button"
+                    class="action-btn open-btn"
                     onclick="openSubmission(${item.id})"
                 >
-                    📝 Open Submission
+                    Open
                 </button>
 
+                ${
+                    item.status === "new"
+                        ? `
+                        <button
+                            class="action-btn select-btn"
+                            onclick="changeStatus(${item.id}, 'selected')"
+                        >
+                            🟡 Select
+                        </button>
 
-                <button
-                    class="action-btn action-selected"
-                    type="button"
-                    onclick="changeStatus(${item.id}, 'selected')"
-                >
-                    🟡 Selected
-                </button>
-
-
-                <button
-                    class="action-btn action-rejected"
-                    type="button"
-                    onclick="changeStatus(${item.id}, 'rejected')"
-                >
-                    🔴 Rejected
-                </button>
-
-
-                <button
-                    class="action-btn action-posted"
-                    type="button"
-                    onclick="changeStatus(${item.id}, 'posted')"
-                >
-                    🟢 Posted
-                </button>
+                        <button
+                            class="action-btn reject-btn"
+                            onclick="changeStatus(${item.id}, 'rejected')"
+                        >
+                            Reject
+                        </button>
+                        `
+                        : ""
+                }
 
 
-                <button
-                    class="action-btn"
-                    type="button"
-                    onclick="changeStatus(${item.id}, 'new')"
-                >
-                    ↩ New
-                </button>
+                ${
+                    item.status === "selected"
+                        ? `
+                        <button
+                            class="action-btn write-btn"
+                            onclick="changeStatus(${item.id}, 'writing')"
+                        >
+                            ✍️ Start Writing
+                        </button>
+                        `
+                        : ""
+                }
 
+
+                ${
+                    item.status === "writing" && quote
+                        ? `
+                        <button
+                            class="action-btn write-btn"
+                            onclick="openSubmission(${item.id})"
+                        >
+                            ✏️ Edit Quote
+                        </button>
+                        `
+                        : ""
+                }
+
+
+                ${
+                    item.status === "written"
+                        ? `
+                        <button
+                            class="action-btn ready-btn"
+                            onclick="openSubmission(${item.id})"
+                        >
+                            📸 Prepare Post
+                        </button>
+                        `
+                        : ""
+                }
+
+
+                ${
+                    item.status === "instagram_ready"
+                        ? `
+                        <button
+                            class="action-btn posted-btn"
+                            onclick="changeStatus(${item.id}, 'posted')"
+                        >
+                            ✅ Mark Posted
+                        </button>
+                        `
+                        : ""
+                }
 
             </div>
 
@@ -1079,891 +854,557 @@ function createSubmissionCard(
 }
 
 
+/* =========================================
+   OPEN SUBMISSION
+========================================= */
 
-// ==========================================
-// OPEN SUBMISSION MODAL
-// ==========================================
+window.openSubmission =
+    function (id) {
 
-function openSubmission(
-    id
-) {
+        const item =
+            allSubmissions.find(
+                submission =>
+                    Number(submission.id) ===
+                    Number(id)
+            );
 
-    const submission =
-        allSubmissions.find(
-            item =>
-                item.id === id
+        if (!item) {
+            return;
+        }
+
+        currentSubmissionId =
+            item.id;
+
+        modalTitle.textContent =
+            `Submission #${item.id}`;
+
+        modalStatus.textContent =
+            getStatusLabel(item.status);
+
+        modalStatus.className =
+            `status-badge status-${item.status}`;
+
+        modalSituation.textContent =
+            item.situation || "—";
+
+        modalFeeling.textContent =
+            item.feeling || "—";
+
+        modalMessage.textContent =
+            item.message || "—";
+
+        modalOriginalQuote.value =
+            item.original_quote || "";
+
+        modalName.textContent =
+            item.name || "Anonymous";
+
+        modalInstagram.textContent =
+            item.instagram || "—";
+
+        modalPermission.textContent =
+            item.permission
+                ? "Allowed"
+                : "Not allowed";
+
+        modalDate.textContent =
+            formatDate(item.created_at);
+
+        quoteSaveMessage.textContent =
+            "";
+
+        updateWriterButtons(item);
+
+        submissionModal.classList.remove(
+            "hidden"
         );
+    };
 
 
-    if (!submission) {
+/* =========================================
+   WRITER BUTTON STATE
+========================================= */
 
-        alert(
-            "Submission not found."
-        );
+function updateWriterButtons(item) {
 
-        return;
+    startWritingBtn.style.display =
+        "none";
+
+    saveQuoteBtn.style.display =
+        "none";
+
+    markPostReadyBtn.style.display =
+        "none";
+
+    markPostedBtn.style.display =
+        "none";
+
+
+    if (item.status === "selected") {
+
+        startWritingBtn.style.display =
+            "inline-block";
+
     }
-
-
-    currentSubmissionId =
-        id;
-
-
-    const status =
-        submission.status ||
-        "new";
-
-
-    const date =
-        submission.created_at
-            ? new Date(
-                submission.created_at
-            ).toLocaleString("en-IN")
-            : "Unknown";
-
-
-
-    // ======================================
-    // BASIC DATA
-    // ======================================
-
-    document.getElementById(
-        "modalTitle"
-    ).textContent =
-        `Submission #${submission.id}`;
-
-
-    document.getElementById(
-        "modalSituation"
-    ).textContent =
-        submission.situation ||
-        "—";
-
-
-    document.getElementById(
-        "modalFeeling"
-    ).textContent =
-        submission.feeling ||
-        "—";
-
-
-    document.getElementById(
-        "modalMessage"
-    ).textContent =
-        submission.message ||
-        "—";
-
-
-    document.getElementById(
-        "modalName"
-    ).textContent =
-        submission.name ||
-        "Anonymous";
-
-
-    document.getElementById(
-        "modalInstagram"
-    ).textContent =
-        submission.instagram ||
-        "—";
-
-
-    document.getElementById(
-        "modalPermission"
-    ).textContent =
-        submission.permission
-            ? "Yes"
-            : "No";
-
-
-    document.getElementById(
-        "modalDate"
-    ).textContent =
-        date;
-
-
-
-    // ======================================
-    // STATUS
-    // ======================================
-
-    const modalStatus =
-        document.getElementById(
-            "modalStatus"
-        );
-
-
-    modalStatus.textContent =
-        status;
-
-
-    modalStatus.className =
-        `status status-${escapeHtml(status)}`;
-
-
-
-    // ======================================
-    // WRITER QUOTE
-    // ======================================
-
-    modalOriginalQuote.value =
-        submission.original_quote ||
-        "";
-
-
-    quoteSaveMessage.textContent =
-        "";
-
-
-
-    // ======================================
-    // WRITER BUTTON STATE
-    // ======================================
-
-    updateWriterButtons(
-        submission
-    );
-
-
-
-    // ======================================
-    // SHOW MODAL
-    // ======================================
-
-    submissionModal.style.display =
-        "flex";
-
-
-    document.body.style.overflow =
-        "hidden";
-}
-
-
-
-// ==========================================
-// UPDATE WRITER BUTTONS
-// ==========================================
-
-function updateWriterButtons(
-    submission
-) {
-
-    const hasQuote =
-        Boolean(
-            submission.original_quote &&
-            submission.original_quote.trim()
-        );
 
 
     if (
-        submission.status ===
-        "posted"
+        item.status === "writing" ||
+        item.status === "written"
     ) {
 
-        markPostedBtn.textContent =
-            "✓ Already Posted";
-
-
-        markPostedBtn.disabled =
-            true;
-
-
-    } else {
-
-        markPostedBtn.textContent =
-            "🟢 Mark as Posted";
-
-
-        markPostedBtn.disabled =
-            false;
+        saveQuoteBtn.style.display =
+            "inline-block";
     }
 
 
-    if (hasQuote) {
+    if (item.status === "written") {
 
-        saveQuoteBtn.textContent =
-            "💾 Update Quote";
+        markPostReadyBtn.style.display =
+            "inline-block";
+    }
 
-    } else {
 
-        saveQuoteBtn.textContent =
-            "💾 Save Quote";
+    if (item.status === "instagram_ready") {
+
+        markPostReadyBtn.style.display =
+            "none";
+
+        markPostedBtn.style.display =
+            "inline-block";
+    }
+
+
+    if (item.status === "posted") {
+
+        startWritingBtn.style.display =
+            "none";
+
+        saveQuoteBtn.style.display =
+            "none";
+
+        markPostReadyBtn.style.display =
+            "none";
+
+        markPostedBtn.style.display =
+            "none";
     }
 }
 
 
+/* =========================================
+   START WRITING
+========================================= */
 
-// ==========================================
-// SAVE ORIGINAL QUOTE
-// ==========================================
+startWritingBtn.addEventListener(
+    "click",
+    async function () {
+
+        if (!currentSubmissionId) {
+            return;
+        }
+
+        await changeStatus(
+            currentSubmissionId,
+            "writing",
+            true
+        );
+    }
+);
+
+
+/* =========================================
+   SAVE QUOTE
+========================================= */
 
 saveQuoteBtn.addEventListener(
     "click",
     async function () {
 
-        if (
-            currentSubmissionId ===
-            null
-        ) {
-
-            quoteSaveMessage.textContent =
-                "No submission selected.";
-
+        if (!currentSubmissionId) {
             return;
         }
 
+        const quote =
+            modalOriginalQuote.value.trim();
 
-        const originalQuote =
-            modalOriginalQuote
-                .value
-                .trim();
+        if (!quote) {
 
+            quoteSaveMessage.textContent =
+                "Please write a quote first.";
+
+            quoteSaveMessage.style.color =
+                "#df7070";
+
+            return;
+        }
 
         const token =
             localStorage.getItem(
-                "manasulo_admin_access_token"
+                "mm_access_token"
             );
-
-
-        if (!token) {
-
-            quoteSaveMessage.textContent =
-                "Please login again.";
-
-            return;
-        }
-
 
         saveQuoteBtn.disabled =
             true;
 
-
-        const oldButtonText =
-            saveQuoteBtn.textContent;
-
-
         saveQuoteBtn.textContent =
             "Saving...";
 
-
-        quoteSaveMessage.textContent =
-            "";
-
-
         try {
 
-            const response =
-                await fetch(
-                    `${SUPABASE_URL}/rest/v1/submissions?id=eq.${currentSubmissionId}`,
-                    {
-                        method: "PATCH",
+            await supabaseRequest(
+                `/rest/v1/submissions?id=eq.${currentSubmissionId}`,
+                {
+                    method: "PATCH",
 
-                        headers: {
+                    headers: {
+                        Prefer: "return=minimal"
+                    },
 
-                            "apikey":
-                                SUPABASE_KEY,
-
-                            "Authorization":
-                                `Bearer ${token}`,
-
-                            "Content-Type":
-                                "application/json",
-
-                            "Prefer":
-                                "return=minimal"
-                        },
-
-                        body:
-                            JSON.stringify({
-                                original_quote:
-                                    originalQuote
-                            })
-                    }
-                );
-
-
-            if (!response.ok) {
-
-                let error;
-
-                try {
-
-                    error =
-                        await response.json();
-
-                } catch {
-
-                    error = {
-                        message:
-                            "Quote save failed."
-                    };
-                }
-
-
-                throw new Error(
-                    error.message ||
-                    error.hint ||
-                    "Quote save failed."
-                );
-            }
-
-
-
-            // ==================================
-            // UPDATE LOCAL DATA
-            // ==================================
-
-            const submission =
-                allSubmissions.find(
-                    item =>
-                        item.id ===
-                        currentSubmissionId
-                );
-
-
-            if (submission) {
-
-                submission.original_quote =
-                    originalQuote;
-            }
-
-
-
-            // ==================================
-            // SUCCESS
-            // ==================================
-
-            quoteSaveMessage.textContent =
-                "Quote saved successfully 🖤";
-
-
-            updateWriterButtons(
-                submission
+                    body: JSON.stringify({
+                        original_quote: quote,
+                        status: "written"
+                    })
+                },
+                token
             );
 
+            updateLocalSubmission(
+                currentSubmissionId,
+                {
+                    original_quote: quote,
+                    status: "written"
+                }
+            );
+
+            quoteSaveMessage.textContent =
+                "✓ Quote saved — Written";
+
+            quoteSaveMessage.style.color =
+                "#69c58a";
+
+            updateStats();
 
             renderWriterQueue();
 
+            renderReadyQueue();
+
             renderSubmissions();
 
+            const updated =
+                getCurrentSubmission();
+
+            if (updated) {
+                updateWriterButtons(updated);
+            }
 
         } catch (error) {
 
-            console.error(
-                "Quote save error:",
-                error
-            );
-
+            console.error(error);
 
             quoteSaveMessage.textContent =
-                "Save failed: " +
                 error.message;
 
+            quoteSaveMessage.style.color =
+                "#df7070";
 
         } finally {
 
             saveQuoteBtn.disabled =
                 false;
 
-
-            if (
-                currentSubmissionId !==
-                null
-            ) {
-
-                const current =
-                    allSubmissions.find(
-                        item =>
-                            item.id ===
-                            currentSubmissionId
-                    );
-
-
-                if (current) {
-
-                    updateWriterButtons(
-                        current
-                    );
-
-                } else {
-
-                    saveQuoteBtn.textContent =
-                        oldButtonText;
-                }
-
-            } else {
-
-                saveQuoteBtn.textContent =
-                    oldButtonText;
-            }
+            saveQuoteBtn.textContent =
+                "💾 Save Quote";
         }
-
     }
 );
 
 
+/* =========================================
+   MARK POST READY
+========================================= */
 
-// ==========================================
-// MARK AS POSTED
-// ==========================================
+markPostReadyBtn.addEventListener(
+    "click",
+    async function () {
+
+        if (!currentSubmissionId) {
+            return;
+        }
+
+        const quote =
+            modalOriginalQuote.value.trim();
+
+        if (!quote) {
+
+            quoteSaveMessage.textContent =
+                "Save the quote before marking it Post Ready.";
+
+            quoteSaveMessage.style.color =
+                "#df7070";
+
+            return;
+        }
+
+        await changeStatus(
+            currentSubmissionId,
+            "instagram_ready",
+            true
+        );
+    }
+);
+
+
+/* =========================================
+   MARK POSTED
+========================================= */
 
 markPostedBtn.addEventListener(
     "click",
     async function () {
 
-        if (
-            currentSubmissionId ===
-            null
-        ) {
-
-            quoteSaveMessage.textContent =
-                "No submission selected.";
-
+        if (!currentSubmissionId) {
             return;
         }
 
-
-        const submission =
-            allSubmissions.find(
-                item =>
-                    item.id ===
-                    currentSubmissionId
-            );
-
-
-        if (!submission) {
-
-            quoteSaveMessage.textContent =
-                "Submission not found.";
-
-            return;
-        }
+        await changeStatus(
+            currentSubmissionId,
+            "posted",
+            true
+        );
+    }
+);
 
 
-        const quote =
-            modalOriginalQuote
-                .value
-                .trim();
+/* =========================================
+   CHANGE STATUS
+========================================= */
 
-
-        if (!quote) {
-
-            quoteSaveMessage.textContent =
-                "Please write and save the quote before posting.";
-
-            modalOriginalQuote.focus();
-
-            return;
-        }
-
+window.changeStatus =
+    async function (
+        id,
+        newStatus,
+        keepModalOpen = false
+    ) {
 
         const token =
             localStorage.getItem(
-                "manasulo_admin_access_token"
+                "mm_access_token"
             );
 
-
         if (!token) {
-
-            quoteSaveMessage.textContent =
-                "Please login again.";
-
             return;
         }
 
-
-        markPostedBtn.disabled =
-            true;
-
-
-        markPostedBtn.textContent =
-            "Posting...";
-
-
         try {
 
-            // ==================================
-            // SAVE QUOTE FIRST
-            // ==================================
+            await supabaseRequest(
+                `/rest/v1/submissions?id=eq.${id}`,
+                {
+                    method: "PATCH",
 
-            if (
-                submission.original_quote !==
-                quote
-            ) {
+                    headers: {
+                        Prefer: "return=minimal"
+                    },
 
-                const quoteResponse =
-                    await fetch(
-                        `${SUPABASE_URL}/rest/v1/submissions?id=eq.${currentSubmissionId}`,
-                        {
-                            method: "PATCH",
-
-                            headers: {
-
-                                "apikey":
-                                    SUPABASE_KEY,
-
-                                "Authorization":
-                                    `Bearer ${token}`,
-
-                                "Content-Type":
-                                    "application/json",
-
-                                "Prefer":
-                                    "return=minimal"
-                            },
-
-                            body:
-                                JSON.stringify({
-                                    original_quote:
-                                        quote
-                                })
-                        }
-                    );
+                    body: JSON.stringify({
+                        status: newStatus
+                    })
+                },
+                token
+            );
 
 
-                if (!quoteResponse.ok) {
-
-                    let error;
-
-                    try {
-
-                        error =
-                            await quoteResponse.json();
-
-                    } catch {
-
-                        error = {
-                            message:
-                                "Quote save failed."
-                        };
-                    }
-
-
-                    throw new Error(
-                        error.message ||
-                        error.hint ||
-                        "Quote save failed."
-                    );
+            updateLocalSubmission(
+                id,
+                {
+                    status: newStatus
                 }
+            );
 
-
-                submission.original_quote =
-                    quote;
-            }
-
-
-
-            // ==================================
-            // CHANGE STATUS TO POSTED
-            // ==================================
-
-            const statusResponse =
-                await fetch(
-                    `${SUPABASE_URL}/rest/v1/submissions?id=eq.${currentSubmissionId}`,
-                    {
-                        method: "PATCH",
-
-                        headers: {
-
-                            "apikey":
-                                SUPABASE_KEY,
-
-                            "Authorization":
-                                `Bearer ${token}`,
-
-                            "Content-Type":
-                                "application/json",
-
-                            "Prefer":
-                                "return=minimal"
-                        },
-
-                        body:
-                            JSON.stringify({
-                                status:
-                                    "posted"
-                            })
-                    }
-                );
-
-
-            if (!statusResponse.ok) {
-
-                let error;
-
-                try {
-
-                    error =
-                        await statusResponse.json();
-
-                } catch {
-
-                    error = {
-                        message:
-                            "Status update failed."
-                    };
-                }
-
-
-                throw new Error(
-                    error.message ||
-                    error.hint ||
-                    "Could not mark as posted."
-                );
-            }
-
-
-
-            // ==================================
-            // UPDATE LOCAL DATA
-            // ==================================
-
-            submission.status =
-                "posted";
-
-
-            submission.original_quote =
-                quote;
-
-
-
-            // ==================================
-            // UPDATE UI
-            // ==================================
 
             updateStats();
 
             renderWriterQueue();
 
+            renderReadyQueue();
+
             renderSubmissions();
 
 
-            quoteSaveMessage.textContent =
-                "Posted successfully 🟢";
+            if (
+                keepModalOpen &&
+                Number(currentSubmissionId) ===
+                Number(id)
+            ) {
 
+                const updated =
+                    getCurrentSubmission();
 
-            updateWriterButtons(
-                submission
-            );
+                if (updated) {
 
+                    modalStatus.textContent =
+                        getStatusLabel(
+                            updated.status
+                        );
+
+                    modalStatus.className =
+                        `status-badge status-${updated.status}`;
+
+                    updateWriterButtons(
+                        updated
+                    );
+
+                    if (
+                        newStatus ===
+                        "writing"
+                    ) {
+
+                        quoteSaveMessage.textContent =
+                            "✍️ Writing mode started.";
+
+                        quoteSaveMessage.style.color =
+                            "#6fa8dc";
+                    }
+
+                    if (
+                        newStatus ===
+                        "instagram_ready"
+                    ) {
+
+                        quoteSaveMessage.textContent =
+                            "📸 Instagram Post Ready.";
+
+                        quoteSaveMessage.style.color =
+                            "#c9a86a";
+                    }
+
+                    if (
+                        newStatus ===
+                        "posted"
+                    ) {
+
+                        quoteSaveMessage.textContent =
+                            "✓ Marked as Posted.";
+
+                        quoteSaveMessage.style.color =
+                            "#69c58a";
+                    }
+                }
+
+            } else {
+
+                closeModal();
+            }
 
         } catch (error) {
 
-            console.error(
-                "Mark posted error:",
-                error
-            );
+            console.error(error);
 
+            if (keepModalOpen) {
 
-            quoteSaveMessage.textContent =
-                "Post failed: " +
-                error.message;
+                quoteSaveMessage.textContent =
+                    error.message;
 
+                quoteSaveMessage.style.color =
+                    "#df7070";
 
-        } finally {
+            } else {
 
-            if (
-                submission.status !==
-                "posted"
-            ) {
-
-                markPostedBtn.disabled =
-                    false;
-
-                markPostedBtn.textContent =
-                    "🟢 Mark as Posted";
+                alert(
+                    error.message ||
+                    "Status update failed."
+                );
             }
-
         }
-
-    }
-);
+    };
 
 
+/* =========================================
+   UPDATE LOCAL DATA
+========================================= */
 
-// ==========================================
-// CHANGE STATUS
-// ==========================================
-
-async function changeStatus(
+function updateLocalSubmission(
     id,
-    newStatus
+    updates
 ) {
 
-    const token =
-        localStorage.getItem(
-            "manasulo_admin_access_token"
+    const index =
+        allSubmissions.findIndex(
+            item =>
+                Number(item.id) ===
+                Number(id)
         );
 
-
-    if (!token) {
-
-        alert(
-            "Please login again."
-        );
-
+    if (index === -1) {
         return;
     }
 
-
-    try {
-
-        const response =
-            await fetch(
-                `${SUPABASE_URL}/rest/v1/submissions?id=eq.${id}`,
-                {
-                    method: "PATCH",
-
-                    headers: {
-
-                        "apikey":
-                            SUPABASE_KEY,
-
-                        "Authorization":
-                            `Bearer ${token}`,
-
-                        "Content-Type":
-                            "application/json",
-
-                        "Prefer":
-                            "return=minimal"
-                    },
-
-                    body:
-                        JSON.stringify({
-                            status:
-                                newStatus
-                        })
-                }
-            );
-
-
-        if (!response.ok) {
-
-            let error;
-
-            try {
-
-                error =
-                    await response.json();
-
-            } catch {
-
-                error = {
-                    message:
-                        "Status update failed."
-                };
-            }
-
-
-            throw new Error(
-                error.message ||
-                error.hint ||
-                "Status update failed."
-            );
-        }
-
-
-
-        // ==================================
-        // UPDATE LOCAL DATA
-        // ==================================
-
-        const submission =
-            allSubmissions.find(
-                item =>
-                    item.id === id
-            );
-
-
-        if (submission) {
-
-            submission.status =
-                newStatus;
-        }
-
-
-
-        // ==================================
-        // UPDATE UI
-        // ==================================
-
-        updateStats();
-
-        renderWriterQueue();
-
-        renderSubmissions();
-
-
-
-        // If modal is currently open
-        if (
-            currentSubmissionId ===
-            id
-        ) {
-
-            const currentSubmission =
-                allSubmissions.find(
-                    item =>
-                        item.id === id
-                );
-
-
-            if (currentSubmission) {
-
-                const modalStatus =
-                    document.getElementById(
-                        "modalStatus"
-                    );
-
-
-                modalStatus.textContent =
-                    newStatus;
-
-
-                modalStatus.className =
-                    `status status-${escapeHtml(
-                        newStatus
-                    )}`;
-
-
-                updateWriterButtons(
-                    currentSubmission
-                );
-            }
-        }
-
-
-    } catch (error) {
-
-        console.error(
-            "Status update error:",
-            error
-        );
-
-
-        alert(
-            "Status update failed: " +
-            error.message
-        );
-    }
+    allSubmissions[index] = {
+        ...allSubmissions[index],
+        ...updates
+    };
 }
 
 
+/* =========================================
+   CURRENT SUBMISSION
+========================================= */
 
-// ==========================================
-// CLOSE MODAL
-// ==========================================
+function getCurrentSubmission() {
+
+    return allSubmissions.find(
+        item =>
+            Number(item.id) ===
+            Number(currentSubmissionId)
+    );
+}
+
+
+/* =========================================
+   FILTERS
+========================================= */
+
+document
+    .querySelectorAll(".filter-btn")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                document
+                    .querySelectorAll(
+                        ".filter-btn"
+                    )
+                    .forEach(btn =>
+                        btn.classList.remove(
+                            "active"
+                        )
+                    );
+
+                this.classList.add(
+                    "active"
+                );
+
+                currentFilter =
+                    this.dataset.filter;
+
+                renderSubmissions();
+            }
+        );
+
+    });
+
+
+/* =========================================
+   MODAL CLOSE
+========================================= */
 
 modalClose.addEventListener(
     "click",
-    function () {
-
-        closeModal();
-
-    }
+    closeModal
 );
-
 
 submissionModal.addEventListener(
     "click",
@@ -1973,205 +1414,180 @@ submissionModal.addEventListener(
             event.target ===
             submissionModal
         ) {
-
             closeModal();
-
         }
-
     }
 );
 
+
+function closeModal() {
+
+    submissionModal.classList.add(
+        "hidden"
+    );
+
+    currentSubmissionId =
+        null;
+}
+
+
+/* =========================================
+   ESC KEY
+========================================= */
 
 document.addEventListener(
     "keydown",
     function (event) {
 
-        if (
-            event.key ===
-            "Escape"
-        ) {
-
-            if (
-                submissionModal.style.display ===
-                "flex"
-            ) {
-
-                closeModal();
-
-            }
-
+        if (event.key === "Escape") {
+            closeModal();
         }
-
     }
 );
 
 
-
-function closeModal() {
-
-    submissionModal.style.display =
-        "none";
-
-
-    document.body.style.overflow =
-        "";
-
-
-    currentSubmissionId =
-        null;
-
-
-    quoteSaveMessage.textContent =
-        "";
-}
-
-
-
-// ==========================================
-// FILTER BUTTONS
-// ==========================================
-
-document
-    .querySelectorAll(".filter")
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    document
-                        .querySelectorAll(
-                            ".filter"
-                        )
-                        .forEach(
-                            btn =>
-                                btn.classList
-                                    .remove(
-                                        "active"
-                                    )
-                        );
-
-
-                    this.classList.add(
-                        "active"
-                    );
-
-
-                    currentFilter =
-                        this.dataset.status;
-
-
-                    renderSubmissions();
-
-                }
-            );
-
-        }
-    );
-
-
-
-// ==========================================
-// REFRESH
-// ==========================================
+/* =========================================
+   REFRESH
+========================================= */
 
 refreshBtn.addEventListener(
     "click",
-    function () {
+    async function () {
 
-        loadSubmissions();
+        refreshBtn.disabled =
+            true;
 
+        refreshBtn.textContent =
+            "Refreshing...";
+
+        await loadSubmissions();
+
+        refreshBtn.disabled =
+            false;
+
+        refreshBtn.textContent =
+            "↻ Refresh";
     }
 );
 
 
-
-// ==========================================
-// LOGOUT
-// ==========================================
+/* =========================================
+   LOGOUT
+========================================= */
 
 logoutBtn.addEventListener(
     "click",
     function () {
 
-        localStorage.removeItem(
-            "manasulo_admin_access_token"
-        );
+        clearSession();
 
-
-        localStorage.removeItem(
-            "manasulo_admin_refresh_token"
-        );
-
-
-        dashboard.style.display =
-            "none";
-
-
-        loginPage.style.display =
-            "flex";
-
-
-        loginForm.reset();
-
-
-        currentSubmissionId =
-            null;
-
-
-        submissionModal.style.display =
-            "none";
-
-
-        document.body.style.overflow =
-            "";
-
+        location.reload();
     }
 );
 
 
+/* =========================================
+   CLEAR SESSION
+========================================= */
 
-// ==========================================
-// HTML ESCAPE
-// ==========================================
+function clearSession() {
 
-function escapeHtml(
-    value
-) {
+    localStorage.removeItem(
+        "mm_access_token"
+    );
 
-    return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+    localStorage.removeItem(
+        "mm_refresh_token"
+    );
 }
 
 
+/* =========================================
+   STATUS LABEL
+========================================= */
 
-// ==========================================
-// START
-// ==========================================
+function getStatusLabel(status) {
+
+    const labels = {
+
+        new:
+            "🆕 New",
+
+        selected:
+            "🟡 Selected",
+
+        writing:
+            "✍️ Writing",
+
+        written:
+            "✓ Written",
+
+        instagram_ready:
+            "📸 Instagram Post Ready",
+
+        rejected:
+            "✕ Rejected",
+
+        posted:
+            "🟢 Posted"
+    };
+
+    return labels[status] ||
+        status;
+}
+
+
+/* =========================================
+   DATE
+========================================= */
+
+function formatDate(date) {
+
+    if (!date) {
+        return "—";
+    }
+
+    try {
+
+        return new Date(date)
+            .toLocaleString(
+                "en-IN",
+                {
+                    dateStyle: "medium",
+                    timeStyle: "short"
+                }
+            );
+
+    } catch {
+
+        return date;
+    }
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(value) {
+
+    if (value === null ||
+        value === undefined) {
+
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================
+   START
+========================================= */
 
 checkExistingSession();
