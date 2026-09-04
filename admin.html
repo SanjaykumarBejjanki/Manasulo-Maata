@@ -1,1 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta
+        name="description"
+        content="Manasulo Maata Admin Dashboard"
+    >
+
+    <title>Admin — Manasulo Maata</title>
+
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- ================================
+         ADMIN LOGIN
+    ================================= -->
+
+    <div class="login-page" id="loginPage">
+
+        <div class="login-box">
+
+            <div class="logo">
+                MM
+            </div>
+
+            <h1>
+                Manasulo Maata
+            </h1>
+
+            <p class="subtitle">
+                Admin Dashboard
+            </p>
+
+
+            <form id="loginForm">
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Admin Email"
+                    autocomplete="email"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button type="submit">
+                    Login 🖤
+                </button>
+
+            </form>
+
+
+            <p
+                id="loginError"
+                class="error"
+                aria-live="polite"
+            ></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         ADMIN DASHBOARD
+    ================================= -->
+
+    <div
+        class="dashboard"
+        id="dashboard"
+    >
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <div class="brand">
+                    MANASULO MAATA 🖤
+                </div>
+
+                <div class="admin-label">
+                    Admin Dashboard
+                </div>
+
+            </div>
+
+
+            <button
+                id="logoutBtn"
+                class="logout"
+                type="button"
+            >
+                Logout
+            </button>
+
+        </header>
+
+
+        <!-- MAIN -->
+
+        <main class="container">
+
+
+            <!-- HEADING -->
+
+            <div class="dashboard-heading">
+
+                <div>
+
+                    <h2>
+                        Follower Maatalu
+                    </h2>
+
+                    <p>
+                        Stories received from your followers.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="refreshBtn"
+                    class="refresh"
+                    type="button"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="stats">
+
+
+                <div class="stat-card">
+
+                    <span>
+                        New
+                    </span>
+
+                    <strong id="newCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        Selected
+                    </span>
+
+                    <strong id="selectedCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        Rejected
+                    </span>
+
+                    <strong id="rejectedCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        Posted
+                    </span>
+
+                    <strong id="postedCount">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <div class="filters">
+
+                <button
+                    class="filter active"
+                    data-status="all"
+                    type="button"
+                >
+                    All
+                </button>
+
+
+                <button
+                    class="filter"
+                    data-status="new"
+                    type="button"
+                >
+                    New
+                </button>
+
+
+                <button
+                    class="filter"
+                    data-status="selected"
+                    type="button"
+                >
+                    Selected
+                </button>
+
+
+                <button
+                    class="filter"
+                    data-status="rejected"
+                    type="button"
+                >
+                    Rejected
+                </button>
+
+
+                <button
+                    class="filter"
+                    data-status="posted"
+                    type="button"
+                >
+                    Posted
+                </button>
+
+            </div>
+
+
+            <!-- SUBMISSIONS -->
+
+            <div
+                id="submissions"
+                class="submissions"
+            >
+
+                <div class="loading">
+                    Loading submissions...
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- ADMIN JAVASCRIPT -->
+
+    <script src="admin.js"></script>
+
+</body>
+</html>
