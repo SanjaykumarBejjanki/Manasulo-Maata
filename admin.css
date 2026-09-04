@@ -715,3 +715,129 @@ body {
     }
 
 }
+/* ==========================================
+   WRITER SECTION
+========================================== */
+
+.writer-section {
+    margin-top: 30px;
+    padding: 24px;
+
+    background: #0d0d0d;
+    border: 1px solid #282828;
+    border-radius: 12px;
+}
+
+.writer-header {
+    margin-bottom: 18px;
+}
+
+.writer-header h3 {
+    margin: 0;
+
+    color: #fff;
+
+    font-size: 20px;
+}
+
+
+.writer-textarea {
+    width: 100%;
+    min-height: 140px;
+
+    padding: 16px;
+
+    resize: vertical;
+
+    box-sizing: border-box;
+
+    background: #111;
+    color: #eee;
+
+    border: 1px solid #292929;
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.7;
+
+    outline: none;
+
+    transition: border-color 0.2s ease;
+}
+
+
+.writer-textarea:focus {
+    border-color: #555;
+}
+
+
+.writer-textarea::placeholder {
+    color: #666;
+}
+
+
+.save-quote-btn {
+    margin-top: 15px;
+
+    padding: 12px 20px;
+
+    border: 1px solid #333;
+    border-radius: 8px;
+
+    background: #f5f5f5;
+    color: #080808;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.save-quote-btn:hover {
+    background: #ddd;
+    transform: translateY(-1px);
+}
+
+
+.save-quote-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+.quote-save-message {
+    margin: 12px 0 0;
+
+    font-size: 13px;
+    color: #aaa;
+}
+
+
+/* ==========================================
+   WRITER SECTION MOBILE
+========================================== */
+
+@media (max-width: 600px) {
+
+    .writer-section {
+        padding: 18px;
+    }
+
+    .writer-header h3 {
+        font-size: 18px;
+    }
+
+    .writer-textarea {
+        min-height: 130px;
+    }
+
+    .save-quote-btn {
+        width: 100%;
+    }
+
+}
