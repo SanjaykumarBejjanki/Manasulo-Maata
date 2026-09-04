@@ -1,103 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>Manasulo Maata — Admin</title>
 
-    <meta
-        name="description"
-        content="Manasulo Maata Admin Dashboard"
-    >
-
-    <title>Admin — Manasulo Maata</title>
-
-    <link
-        rel="stylesheet"
-        href="admin.css"
-    >
-
+    <link rel="stylesheet" href="admin.css">
 </head>
-
 
 <body>
 
+    <!-- ================= LOGIN ================= -->
 
-    <!-- ==========================================
-         LOGIN PAGE
-    =========================================== -->
+    <section id="loginSection" class="login-section">
 
-    <div
-        class="login-page"
-        id="loginPage"
-    >
+        <div class="login-card">
 
-        <div class="login-box">
+            <div class="login-logo">MM</div>
 
-            <div class="logo">
-                MM
-            </div>
+            <h1>Manasulo Maata</h1>
 
-            <h1>
-                Manasulo Maata
-            </h1>
-
-            <p class="subtitle">
+            <p class="login-subtitle">
                 Admin Dashboard
             </p>
 
-
             <form id="loginForm">
 
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Admin Email"
-                    autocomplete="email"
-                    required
-                >
+                <div class="input-group">
 
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Password"
-                    autocomplete="current-password"
-                    required
-                >
+                    <label for="email">
+                        Email
+                    </label>
 
-                <button type="submit">
-                    Login 🖤
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Admin email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="login-btn"
+                    id="loginBtn"
+                >
+                    Login
                 </button>
+
+                <p
+                    id="loginMessage"
+                    class="login-message"
+                ></p>
 
             </form>
 
-
-            <p
-                id="loginError"
-                class="error"
-                aria-live="polite"
-            ></p>
-
         </div>
 
-    </div>
+    </section>
 
 
 
-    <!-- ==========================================
-         DASHBOARD
-    =========================================== -->
+    <!-- ================= DASHBOARD ================= -->
 
-    <div
-        class="dashboard"
-        id="dashboard"
+    <section
+        id="dashboardSection"
+        class="dashboard-section hidden"
     >
-
 
         <!-- TOP BAR -->
 
@@ -105,175 +93,162 @@
 
             <div>
 
-                <div class="brand">
-                    MANASULO MAATA 🖤
+                <div class="brand-small">
+                    MM
                 </div>
 
-                <div class="admin-label">
-                    Admin Dashboard
+                <div>
+
+                    <h1>
+                        Manasulo Maata
+                    </h1>
+
+                    <p>
+                        Admin Dashboard
+                    </p>
+
                 </div>
 
             </div>
 
 
-            <button
-                id="logoutBtn"
-                class="logout"
-                type="button"
-            >
-                Logout
-            </button>
+            <div class="topbar-actions">
+
+                <button
+                    id="refreshBtn"
+                    class="secondary-btn"
+                >
+                    ↻ Refresh
+                </button>
+
+                <button
+                    id="logoutBtn"
+                    class="logout-btn"
+                >
+                    Logout
+                </button>
+
+            </div>
 
         </header>
 
 
 
-        <!-- MAIN -->
-
-        <main class="container">
+        <main class="dashboard-container">
 
 
-            <!-- DASHBOARD HEADING -->
+            <!-- ================= STATS ================= -->
 
-            <div class="dashboard-heading">
-
-                <div>
-
-                    <h2>
-                        Follower Maatalu
-                    </h2>
-
-                    <p>
-                        Stories received from your followers.
-                    </p>
-
-                </div>
-
-
-                <button
-                    id="refreshBtn"
-                    class="refresh"
-                    type="button"
-                >
-                    ↻ Refresh
-                </button>
-
-            </div>
-
-
-
-            <!-- ======================================
-                 STATISTICS
-            ======================================= -->
-
-            <div class="stats">
+            <section class="stats-grid">
 
                 <div class="stat-card">
 
-                    <span>
+                    <span class="stat-label">
                         New
                     </span>
 
-                    <strong id="newCount">
+                    <strong
+                        id="newCount"
+                        class="stat-number"
+                    >
                         0
                     </strong>
 
                 </div>
 
 
-                <div class="stat-card">
+                <div class="stat-card selected-stat">
 
-                    <span>
+                    <span class="stat-label">
                         Selected
                     </span>
 
-                    <strong id="selectedCount">
+                    <strong
+                        id="selectedCount"
+                        class="stat-number"
+                    >
                         0
                     </strong>
 
                 </div>
 
 
-                <div class="stat-card">
+                <div class="stat-card writing-stat">
 
-                    <span>
-                        Rejected
+                    <span class="stat-label">
+                        Writing
                     </span>
 
-                    <strong id="rejectedCount">
+                    <strong
+                        id="writingCount"
+                        class="stat-number"
+                    >
                         0
                     </strong>
 
                 </div>
 
 
-                <div class="stat-card">
+                <div class="stat-card written-stat">
 
-                    <span>
+                    <span class="stat-label">
+                        Written
+                    </span>
+
+                    <strong
+                        id="writtenCount"
+                        class="stat-number"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card ready-stat">
+
+                    <span class="stat-label">
+                        Post Ready
+                    </span>
+
+                    <strong
+                        id="instagramReadyCount"
+                        class="stat-number"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card posted-stat">
+
+                    <span class="stat-label">
                         Posted
                     </span>
 
-                    <strong id="postedCount">
+                    <strong
+                        id="postedCount"
+                        class="stat-number"
+                    >
                         0
                     </strong>
 
                 </div>
 
-            </div>
 
+                <div class="stat-card rejected-stat">
 
+                    <span class="stat-label">
+                        Rejected
+                    </span>
 
-            <!-- ======================================
-                 WRITER QUEUE
-            ======================================= -->
-
-            <section class="writer-queue-section">
-
-
-                <div class="writer-queue-header">
-
-                    <div>
-
-                        <span class="section-label">
-                            WRITER WORKSPACE
-                        </span>
-
-                        <h2>
-                            ✍️ Writer Queue
-                        </h2>
-
-                        <p>
-                            Selected follower maatalu waiting to become
-                            original Manasulo Maata posts.
-                        </p>
-
-                    </div>
-
-
-                    <div class="queue-count">
-
-                        <span>
-                            Queue
-                        </span>
-
-                        <strong id="writerQueueCount">
-                            0
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-
-                <div
-                    id="writerQueue"
-                    class="writer-queue"
-                >
-
-                    <div class="queue-empty">
-                        No selected submissions in the writer queue.
-                    </div>
+                    <strong
+                        id="rejectedCount"
+                        class="stat-number"
+                    >
+                        0
+                    </strong>
 
                 </div>
 
@@ -281,112 +256,227 @@
 
 
 
-            <!-- ======================================
-                 FILTERS
-            ======================================= -->
+            <!-- ================= WRITER QUEUE ================= -->
 
-            <div class="filters">
+            <section class="writer-queue-section">
 
-                <button
-                    class="filter active"
-                    data-status="all"
-                    type="button"
-                >
-                    All
-                </button>
+                <div class="section-heading">
 
-                <button
-                    class="filter"
-                    data-status="new"
-                    type="button"
-                >
-                    New
-                </button>
+                    <div>
 
-                <button
-                    class="filter"
-                    data-status="selected"
-                    type="button"
-                >
-                    Selected
-                </button>
+                        <span class="section-eyebrow">
+                            WRITER WORKSPACE
+                        </span>
 
-                <button
-                    class="filter"
-                    data-status="rejected"
-                    type="button"
-                >
-                    Rejected
-                </button>
+                        <h2>
+                            Writer Queue ✍️
+                        </h2>
 
-                <button
-                    class="filter"
-                    data-status="posted"
-                    type="button"
-                >
-                    Posted
-                </button>
+                        <p>
+                            Selected stories waiting to become
+                            Manasulo Maata quotes.
+                        </p>
 
-            </div>
+                    </div>
 
 
+                    <span
+                        id="writerQueueCount"
+                        class="queue-count"
+                    >
+                        0
+                    </span>
 
-            <!-- ======================================
-                 SUBMISSIONS
-            ======================================= -->
-
-            <div
-                id="submissions"
-                class="submissions"
-            >
-
-                <div class="loading">
-                    Loading submissions...
                 </div>
 
-            </div>
 
+                <div
+                    id="writerQueue"
+                    class="writer-queue"
+                ></div>
+
+            </section>
+
+
+
+            <!-- ================= INSTAGRAM READY ================= -->
+
+            <section class="ready-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            INSTAGRAM
+                        </span>
+
+                        <h2>
+                            Post Ready 📸
+                        </h2>
+
+                        <p>
+                            Quotes that are ready to publish.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="readyQueue"
+                    class="ready-queue"
+                ></div>
+
+            </section>
+
+
+
+            <!-- ================= SUBMISSIONS ================= -->
+
+            <section class="submissions-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            SUBMISSIONS
+                        </span>
+
+                        <h2>
+                            All Maatalu
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- FILTERS -->
+
+                <div class="filters">
+
+                    <button
+                        class="filter-btn active"
+                        data-filter="all"
+                    >
+                        All
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="new"
+                    >
+                        New
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="selected"
+                    >
+                        Selected
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="writing"
+                    >
+                        Writing
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="written"
+                    >
+                        Written
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="instagram_ready"
+                    >
+                        📸 Post Ready
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="posted"
+                    >
+                        Posted
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="rejected"
+                    >
+                        Rejected
+                    </button>
+
+                </div>
+
+
+
+                <div
+                    id="submissionsContainer"
+                    class="submissions-container"
+                ></div>
+
+
+                <div
+                    id="emptyState"
+                    class="empty-state hidden"
+                >
+                    <div class="empty-icon">
+                        🖤
+                    </div>
+
+                    <h3>
+                        No submissions found
+                    </h3>
+
+                    <p>
+                        Nothing here yet.
+                    </p>
+
+                </div>
+
+            </section>
 
         </main>
 
-    </div>
+    </section>
 
 
 
-    <!-- ==========================================
-         SUBMISSION MODAL
-    =========================================== -->
+    <!-- ================= SUBMISSION MODAL ================= -->
 
     <div
-        class="modal-overlay"
         id="submissionModal"
-        style="display: none;"
+        class="modal-overlay hidden"
     >
 
         <div class="submission-modal">
 
-
-            <!-- CLOSE -->
-
             <button
-                class="modal-close"
                 id="modalClose"
-                type="button"
-                aria-label="Close"
+                class="modal-close"
             >
-                ✕
+                ×
             </button>
 
-
-
-            <!-- MODAL HEADER -->
 
             <div class="modal-header">
 
                 <div>
 
-                    <span class="modal-small">
-                        FOLLOWER SUBMISSION
+                    <span
+                        id="modalStatus"
+                        class="status-badge"
+                    >
+                        New
                     </span>
 
                     <h2 id="modalTitle">
@@ -395,19 +485,9 @@
 
                 </div>
 
-
-                <span
-                    id="modalStatus"
-                    class="status"
-                >
-                    New
-                </span>
-
             </div>
 
 
-
-            <!-- MODAL CONTENT -->
 
             <div class="modal-content">
 
@@ -416,9 +496,9 @@
 
                 <div class="modal-field">
 
-                    <div class="modal-label">
+                    <span class="modal-label">
                         Situation
-                    </div>
+                    </span>
 
                     <div
                         id="modalSituation"
@@ -433,9 +513,9 @@
 
                 <div class="modal-field">
 
-                    <div class="modal-label">
+                    <span class="modal-label">
                         Feeling
-                    </div>
+                    </span>
 
                     <div
                         id="modalFeeling"
@@ -450,94 +530,99 @@
 
                 <div class="modal-field">
 
-                    <div class="modal-label">
-                        Message
-                    </div>
+                    <span class="modal-label">
+                        Unspoken Maata
+                    </span>
 
                     <div
                         id="modalMessage"
-                        class="modal-value modal-message"
+                        class="modal-message"
                     ></div>
 
                 </div>
 
 
 
-                <!-- ==================================
-                     WRITER SECTION
-                =================================== -->
+                <!-- ================= WRITER ================= -->
 
                 <div class="writer-section">
-
 
                     <div class="writer-header">
 
                         <div>
 
-                            <span class="modal-small">
-                                WRITER SECTION
+                            <span class="section-eyebrow">
+                                MANASULO MAATA WRITER
                             </span>
 
                             <h3>
-                                ✍️ Original Manasulo Maata
+                                Original Quote ✍️
                             </h3>
-
-                            <p class="writer-description">
-                                Transform the follower's feeling into
-                                an original Manasulo Maata.
-                            </p>
 
                         </div>
 
                     </div>
 
 
+                    <p class="writer-description">
+                        Convert the follower's core feeling
+                        into an original Manasulo Maata quote.
+                    </p>
+
 
                     <textarea
                         id="modalOriginalQuote"
                         class="writer-textarea"
-                        placeholder="Write the original Manasulo Maata here..."
-                        rows="6"
+                        placeholder="Write the original Manasulo Maata quote here..."
                     ></textarea>
-
 
 
                     <div class="writer-actions">
 
                         <button
+                            id="startWritingBtn"
+                            class="start-writing-btn"
+                        >
+                            ✍️ Start Writing
+                        </button>
+
+
+                        <button
                             id="saveQuoteBtn"
                             class="save-quote-btn"
-                            type="button"
                         >
                             💾 Save Quote
                         </button>
 
 
                         <button
+                            id="markPostReadyBtn"
+                            class="post-ready-btn"
+                        >
+                            📸 Mark Post Ready
+                        </button>
+
+
+                        <button
                             id="markPostedBtn"
                             class="mark-posted-btn"
-                            type="button"
                         >
-                            🟢 Mark as Posted
+                            ✅ Mark Posted
                         </button>
 
                     </div>
 
 
-
                     <p
                         id="quoteSaveMessage"
                         class="quote-save-message"
-                        aria-live="polite"
                     ></p>
 
                 </div>
 
 
 
-                <!-- ==================================
-                     META
-                =================================== -->
+                <!-- ================= META ================= -->
 
                 <div class="modal-meta">
 
@@ -548,7 +633,7 @@
                         </span>
 
                         <strong id="modalName">
-                            Anonymous
+                            —
                         </strong>
 
                     </div>
@@ -574,7 +659,7 @@
                         </span>
 
                         <strong id="modalPermission">
-                            Yes
+                            —
                         </strong>
 
                     </div>
@@ -583,7 +668,7 @@
                     <div>
 
                         <span>
-                            Submitted
+                            Date
                         </span>
 
                         <strong id="modalDate">
@@ -594,7 +679,6 @@
 
                 </div>
 
-
             </div>
 
         </div>
@@ -602,13 +686,7 @@
     </div>
 
 
-
-    <!-- ==========================================
-         JAVASCRIPT
-    =========================================== -->
-
     <script src="admin.js"></script>
 
 </body>
-
 </html>
