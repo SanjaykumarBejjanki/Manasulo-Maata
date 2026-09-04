@@ -1,3 +1,4 @@
+
 // ==========================================
 // MANASULO MAATA — ADMIN DASHBOARD
 // ==========================================
@@ -114,6 +115,7 @@ loginForm.addEventListener("submit", async function (event) {
         const data = await response.json();
 
         if (!response.ok) {
+
             throw new Error(
                 data.error_description ||
                 data.msg ||
@@ -122,6 +124,7 @@ loginForm.addEventListener("submit", async function (event) {
         }
 
         // Save login session
+
         localStorage.setItem(
             "manasulo_admin_access_token",
             data.access_token
@@ -133,6 +136,7 @@ loginForm.addEventListener("submit", async function (event) {
         );
 
         // Verify admin
+
         await verifyAdmin(data.access_token);
 
         showDashboard();
@@ -275,6 +279,10 @@ async function checkExistingSession() {
 
 let allSubmissions = [];
 let currentFilter = "all";
+
+// Current submission opened inside modal
+let currentSubmissionId = null;
+
 
 async function loadSubmissions() {
 
@@ -429,6 +437,7 @@ function createSubmissionCard(item) {
             <div class="submission-header">
 
                 <div>
+
                     <div class="submission-id">
                         #${item.id}
                     </div>
@@ -436,6 +445,7 @@ function createSubmissionCard(item) {
                     <div class="submission-date">
                         ${escapeHtml(date)}
                     </div>
+
                 </div>
 
                 <span class="status status-${escapeHtml(status)}">
@@ -511,11 +521,12 @@ function createSubmissionCard(item) {
 
 
             <div class="actions">
-            <button
-    class="action-btn"
-    onclick="openSubmission(${item.id})">
-    📝 Open Submission
-</button>
+
+                <button
+                    class="action-btn"
+                    onclick="openSubmission(${item.id})">
+                    📝 Open Submission
+                </button>
 
                 <button
                     class="action-btn action-selected"
@@ -547,6 +558,7 @@ function createSubmissionCard(item) {
     `;
 }
 
+
 // ==========================================
 // OPEN SUBMISSION MODAL
 // ==========================================
@@ -562,49 +574,51 @@ function openSubmission(id) {
         return;
     }
 
+    // Remember which submission is currently open
+    currentSubmissionId = id;
 
-    const status = submission.status || "new";
+    const status =
+        submission.status || "new";
 
-    const date = submission.created_at
-        ? new Date(submission.created_at).toLocaleString("en-IN")
-        : "Unknown";
+    const date =
+        submission.created_at
+            ? new Date(submission.created_at)
+                .toLocaleString("en-IN")
+            : "Unknown";
 
 
-    // Fill modal data
+    // ======================================
+    // FILL MODAL DATA
+    // ======================================
 
     document.getElementById("modalTitle").textContent =
         `Submission #${submission.id}`;
 
-
     document.getElementById("modalSituation").textContent =
         submission.situation || "—";
-
 
     document.getElementById("modalFeeling").textContent =
         submission.feeling || "—";
 
-
     document.getElementById("modalMessage").textContent =
         submission.message || "—";
-
 
     document.getElementById("modalName").textContent =
         submission.name || "Anonymous";
 
-
     document.getElementById("modalInstagram").textContent =
         submission.instagram || "—";
 
-
     document.getElementById("modalPermission").textContent =
         submission.permission ? "Yes" : "No";
-
 
     document.getElementById("modalDate").textContent =
         date;
 
 
-    // Status
+    // ======================================
+    // STATUS
+    // ======================================
 
     const modalStatus =
         document.getElementById("modalStatus");
@@ -615,11 +629,195 @@ function openSubmission(id) {
         `status status-${status}`;
 
 
-    // Show modal
+    // ======================================
+    // WRITER SECTION
+    // ======================================
+
+    const originalQuote =
+        document.getElementById("modalOriginalQuote");
+
+    const quoteSaveMessage =
+        document.getElementById("quoteSaveMessage");
+
+    if (originalQuote) {
+
+        originalQuote.value =
+            submission.original_quote || "";
+    }
+
+    if (quoteSaveMessage) {
+
+        quoteSaveMessage.textContent = "";
+    }
+
+
+    // ======================================
+    // SHOW MODAL
+    // ======================================
 
     document.getElementById("submissionModal").style.display =
         "flex";
 }
+
+
+// ==========================================
+// SAVE ORIGINAL QUOTE
+// ==========================================
+
+const saveQuoteBtn =
+    document.getElementById("saveQuoteBtn");
+
+
+if (saveQuoteBtn) {
+
+    saveQuoteBtn.addEventListener(
+        "click",
+        async function () {
+
+            if (!currentSubmissionId) {
+
+                if (typeof quoteSaveMessage !== "undefined") {
+                    quoteSaveMessage.textContent =
+                        "No submission selected.";
+                }
+
+                return;
+            }
+
+
+            const originalQuote =
+                document.getElementById(
+                    "modalOriginalQuote"
+                ).value.trim();
+
+
+            const quoteMessage =
+                document.getElementById(
+                    "quoteSaveMessage"
+                );
+
+
+            const token =
+                localStorage.getItem(
+                    "manasulo_admin_access_token"
+                );
+
+
+            if (!token) {
+
+                quoteMessage.textContent =
+                    "Please login again.";
+
+                return;
+            }
+
+
+            // Disable button while saving
+
+            saveQuoteBtn.disabled = true;
+
+            const oldButtonText =
+                saveQuoteBtn.textContent;
+
+            saveQuoteBtn.textContent =
+                "Saving...";
+
+
+            try {
+
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/submissions?id=eq.${currentSubmissionId}`,
+                    {
+                        method: "PATCH",
+
+                        headers: {
+                            "apikey": SUPABASE_KEY,
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                            "Prefer": "return=minimal"
+                        },
+
+                        body: JSON.stringify({
+                            original_quote: originalQuote
+                        })
+                    }
+                );
+
+
+                if (!response.ok) {
+
+                    let error;
+
+                    try {
+                        error =
+                            await response.json();
+                    } catch {
+                        error = {
+                            message:
+                                "Quote save failed."
+                        };
+                    }
+
+                    throw new Error(
+                        error.message ||
+                        error.hint ||
+                        "Quote save failed."
+                    );
+                }
+
+
+                // ==================================
+                // UPDATE LOCAL SUBMISSION
+                // ==================================
+
+                const submission =
+                    allSubmissions.find(
+                        item =>
+                            item.id === currentSubmissionId
+                    );
+
+
+                if (submission) {
+
+                    submission.original_quote =
+                        originalQuote;
+                }
+
+
+                // ==================================
+                // SUCCESS MESSAGE
+                // ==================================
+
+                quoteMessage.textContent =
+                    "Quote saved 🖤";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Quote save error:",
+                    error
+                );
+
+                quoteMessage.textContent =
+                    "Save failed: " +
+                    error.message;
+
+
+            } finally {
+
+                saveQuoteBtn.disabled = false;
+
+                saveQuoteBtn.textContent =
+                    oldButtonText;
+            }
+
+        }
+    );
+
+}
+
+
 // ==========================================
 // CHANGE STATUS
 // ==========================================
@@ -632,7 +830,9 @@ async function changeStatus(id, newStatus) {
         );
 
     if (!token) {
+
         alert("Please login again.");
+
         return;
     }
 
@@ -656,6 +856,7 @@ async function changeStatus(id, newStatus) {
             }
         );
 
+
         if (!response.ok) {
 
             const error =
@@ -667,18 +868,26 @@ async function changeStatus(id, newStatus) {
             );
         }
 
+
         // Update local data
+
         const submission =
             allSubmissions.find(
                 item => item.id === id
             );
 
+
         if (submission) {
-            submission.status = newStatus;
+
+            submission.status =
+                newStatus;
         }
 
+
         updateStats();
+
         renderSubmissions();
+
 
     } catch (error) {
 
@@ -690,6 +899,8 @@ async function changeStatus(id, newStatus) {
         );
     }
 }
+
+
 // ==========================================
 // CLOSE SUBMISSION MODAL
 // ==========================================
@@ -701,22 +912,33 @@ const modalClose =
     document.getElementById("modalClose");
 
 
-modalClose.addEventListener("click", function () {
+modalClose.addEventListener(
+    "click",
+    function () {
 
-    submissionModal.style.display = "none";
+        submissionModal.style.display =
+            "none";
 
-});
+        currentSubmissionId = null;
+    }
+);
 
 
-submissionModal.addEventListener("click", function (event) {
+submissionModal.addEventListener(
+    "click",
+    function (event) {
 
-    if (event.target === submissionModal) {
+        if (event.target === submissionModal) {
 
-        submissionModal.style.display = "none";
+            submissionModal.style.display =
+                "none";
+
+            currentSubmissionId = null;
+        }
 
     }
+);
 
-});
 
 // ==========================================
 // FILTER BUTTONS
@@ -755,7 +977,9 @@ document
 refreshBtn.addEventListener(
     "click",
     function () {
+
         loadSubmissions();
+
     }
 );
 
@@ -776,10 +1000,15 @@ logoutBtn.addEventListener(
             "manasulo_admin_refresh_token"
         );
 
-        dashboard.style.display = "none";
-        loginPage.style.display = "flex";
+        dashboard.style.display =
+            "none";
+
+        loginPage.style.display =
+            "flex";
 
         loginForm.reset();
+
+        currentSubmissionId = null;
     }
 );
 
