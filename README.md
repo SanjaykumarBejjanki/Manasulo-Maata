@@ -1,81 +1,103 @@
-🖤 Manasulo Maata
+# 🖤 Manasulo Maata
 
-“Manasulo unna maatalaki oka roopam.”
+### Manasulo unna maatalaki oka roopam.
 
-Manasulo Maata is a dark, minimal, emotion-focused platform where people can share their real-life situations, feelings, and unspoken thoughts.
+[![Live Website](https://img.shields.io/badge/Live%20Website-Vercel-black?style=for-the-badge\&logo=vercel)](https://manasulo-maata.vercel.app/)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge\&logo=github)](https://github.com/SanjaykumarBejjanki/Manasulo-Maata)
 
-Instead of providing generic motivational quotes, the platform transforms real user-submitted feelings into meaningful written expressions.
+---
 
-🌐 Project Overview
+## 🌐 About the Project
 
-The project is divided into two separate interfaces:
+**Manasulo Maata** is a dark, minimal, emotion-focused platform where people can share their real-life situations, feelings, and unspoken thoughts.
 
-👤 Public User Website
+Instead of creating generic motivational quotes, the platform focuses on transforming **real human experiences and emotions into meaningful written expressions**.
+
+The core idea is simple:
+
+> **Real Situation → Real Feeling → Unspoken Thought → Writer's Interpretation → Original Quote → Instagram Post**
+
+The user's story is used as inspiration rather than simply being copied.
+
+---
+
+## ✨ What Makes Manasulo Maata Different?
+
+Manasulo Maata is not designed as another generic motivational quote platform.
+
+The concept is based on something people often experience:
+
+> **They have something in their heart, but they don't know how to put it into words.**
+
+A follower can share their situation and feelings.
+
+The writer then identifies the core emotion and transforms it into an original Manasulo Maata expression.
+
+### ✍️ Writing Formula
+
+Every written expression follows:
+
+```text
+Observation
+     ↓
+Feeling
+     ↓
+Realization
+```
+
+---
+
+## 👤 Public User Website
+
+The public website allows visitors to interact with the Manasulo Maata concept and submit their own experiences.
 
 Users can:
 
-Read about Manasulo Maata
-Share their personal situation
-Select/write their feeling
-Submit their unspoken message
-Optionally provide their name
-Optionally provide their Instagram ID
-Give permission for their submission to be used
+* 🖤 Learn about Manasulo Maata
+* 📝 Share their personal situation
+* 💭 Select or describe their feeling
+* 📩 Submit their unspoken message
+* 👤 Optionally provide their name
+* 📱 Optionally provide their Instagram ID
+* ✅ Give permission for their submission to be used
+* 💾 Submit their response securely to the database
 
-User submissions are securely stored in Supabase.
+### 🌐 Live Website
 
-🔐 Admin Dashboard
+**[Visit Manasulo Maata](https://manasulo-maata.vercel.app/)**
 
-Only authorized admins can access the dashboard.
+---
 
-Admins can:
+## 🔐 Admin Dashboard
 
-Login securely
-View user submissions
-Filter submissions by status
-Review situations and feelings
-Select submissions
-Reject submissions
-Start the writing process
-Create/edit the original Manasulo Maata quote
-Save written quotes
-Mark quotes as Instagram Post Ready
-Mark posts as Posted
-Monitor submission statistics
-✨ Features
-👤 User Features
-🖤 Dark cinematic interface
-📝 User submission form
-💭 Situation and feeling collection
-📩 Unspoken message submission
-👤 Optional name
-📱 Optional Instagram ID
-✅ Permission-based submission
-💾 Supabase database integration
-📱 Responsive design
-✓ Form validation
-✓ Submission success feedback
-🔐 Admin Features
-🔑 Admin email/password login
-🛡️ Admin authorization verification
-📊 Submission statistics
-🆕 New submissions
-🟡 Selected submissions
-✍️ Writing queue
-✓ Written quotes
-📸 Instagram Post Ready queue
-🟢 Posted submissions
-✕ Rejected submissions
-🔎 Status filtering
-📖 Detailed submission modal
-✍️ Original quote editor
-💾 Save quote functionality
-🔄 Refresh submissions
-🚪 Logout functionality
-🔄 Submission Workflow
+Manasulo Maata includes a separate admin dashboard for managing user submissions.
 
-The current admin workflow is:
+Only authorized administrators can access submission data and manage the writing workflow.
 
+### Admin Capabilities
+
+* 🔑 Secure email/password login
+* 🛡️ Admin authorization verification
+* 📊 Submission statistics
+* 🔎 Filter submissions by status
+* 📖 View complete submission details
+* 🟡 Select submissions
+* ✕ Reject submissions
+* ✍️ Start the writing process
+* 📝 Create and edit original quotes
+* 💾 Save written quotes
+* 📸 Mark quotes as Instagram Post Ready
+* 🟢 Mark posts as Posted
+* 🔄 Refresh submissions
+* 🚪 Logout
+
+---
+
+## 🔄 Submission Workflow
+
+The complete content pipeline is:
+
+```text
 🆕 New
    ↓
 🟡 Selected
@@ -84,19 +106,28 @@ The current admin workflow is:
    ↓
 ✓ Written
    ↓
-📸 Instagram Post Ready
+📸 Instagram Ready
    ↓
 🟢 Posted
+```
 
-There is also a separate rejection path:
+### Rejection Path
 
+Submissions that are not suitable can follow a separate path:
+
+```text
 🆕 New
    ↓
 ✕ Rejected
-Writer Workflow
+```
 
-When a submission is selected:
+---
 
+## ✍️ Writer Workflow
+
+When a submission is selected, the admin can begin the writing process.
+
+```text
 Selected
    ↓
 Start Writing
@@ -108,22 +139,146 @@ Write Original Quote
 Save Quote
    ↓
 Written
+```
 
-After the quote is written:
+After the quote is completed:
 
+```text
 Written
    ↓
 Mark Post Ready
    ↓
-Instagram Post Ready
+Instagram Ready
    ↓
 Post on Instagram
    ↓
 Mark Posted
+```
 
-Note: The project currently manages the Instagram workflow manually. It does not automatically publish posts through the Instagram API.
+> **Note:** Instagram publishing is currently handled manually. The project does not automatically publish posts through the Instagram API.
 
-🗂️ Project Structure
+---
+
+## 💾 Database
+
+The project uses **Supabase** for database storage, authentication, and security.
+
+### `submissions`
+
+The submission table contains information such as:
+
+| Field            | Purpose                             |
+| ---------------- | ----------------------------------- |
+| `id`             | Unique submission ID                |
+| `situation`      | User's situation                    |
+| `feeling`        | User's feeling                      |
+| `message`        | User's unspoken message             |
+| `name`           | Optional user name                  |
+| `instagram`      | Optional Instagram ID               |
+| `permission`     | Permission to use the submission    |
+| `status`         | Current workflow status             |
+| `original_quote` | Writer-created Manasulo Maata quote |
+| `created_at`     | Submission timestamp                |
+
+### Status Values
+
+```text
+new
+selected
+writing
+written
+instagram_ready
+rejected
+posted
+```
+
+---
+
+## 🔐 Security
+
+Security is an important part of the project.
+
+The application uses:
+
+* Supabase Authentication
+* PostgreSQL
+* Row Level Security (RLS)
+* Admin authorization
+* Security-definer function for admin verification
+* Supabase Publishable Key for frontend access
+
+### Public Access
+
+The public website is allowed to:
+
+```text
+INSERT submissions
+```
+
+The submission requires:
+
+```text
+permission = true
+```
+
+### Admin Access
+
+Authenticated and authorized administrators can:
+
+```text
+SELECT submissions
+UPDATE submissions
+```
+
+Admin authorization is verified using the:
+
+```text
+admins
+```
+
+table and:
+
+```text
+private.is_admin()
+```
+
+security-definer function.
+
+### API Key Security
+
+The frontend uses the Supabase publishable key.
+
+Sensitive Supabase secret/service-role keys must **never** be placed inside frontend JavaScript or exposed publicly.
+
+---
+
+## 🛠️ Technologies Used
+
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+* Responsive Web Design
+
+### Backend / Database
+
+* Supabase
+* PostgreSQL
+* Supabase Authentication
+* Row Level Security (RLS)
+* Supabase REST API
+
+### Deployment
+
+* GitHub
+* Vercel
+
+---
+
+## 📁 Project Structure
+
+```text
 Manasulo-Maata/
 │
 ├── index.html
@@ -135,165 +290,164 @@ Manasulo-Maata/
 ├── admin.js
 │
 └── README.md
-Public Website
-index.html
-style.css
-script.js
+```
 
-These files handle the public-facing Manasulo Maata website and user submission system.
+---
 
-Admin Dashboard
-admin.html
-admin.css
-admin.js
+## 👤 Public Website Files
 
-These files handle the protected admin dashboard, submission management, writer workflow, and status management.
+### `index.html`
 
-🗄️ Database
+### `style.css`
 
-The project uses Supabase for storing submissions.
+### `script.js`
 
-submissions
+These files handle:
 
-The submission data includes fields such as:
+* Public website interface
+* Responsive design
+* Submission form
+* Form validation
+* Supabase submission
+* Success feedback
 
-id
-situation
-feeling
-message
-name
-instagram
-permission
-status
-original_quote
-created_at
-Status Values
-new
-selected
-writing
-written
-instagram_ready
-rejected
-posted
-🔐 Security
+---
 
-The project uses Supabase authentication and Row Level Security.
+## 🔐 Admin Dashboard Files
 
-Public Access
+### `admin.html`
 
-The public website is allowed to:
+### `admin.css`
 
-INSERT submissions
+### `admin.js`
 
-The submission requires:
+These files handle:
 
-permission = true
-Admin Access
+* Admin login
+* Admin authorization
+* Submission management
+* Status filtering
+* Writer workflow
+* Original quote editing
+* Post-ready workflow
+* Posted status
+* Dashboard statistics
 
-Authenticated admin users can:
+---
 
-SELECT submissions
-UPDATE submissions
+## 🚀 Local Setup
 
-Admin authorization is verified through the admins table.
+### 1. Clone the Repository
 
-The project also uses a security-definer function:
-
-private.is_admin()
-
-to verify whether the authenticated user is an authorized administrator.
-
-API Key
-
-The frontend uses the Supabase publishable key.
-
-Sensitive Supabase secret/service-role keys should never be placed inside frontend JavaScript.
-
-🛠️ Technologies Used
-Frontend
-HTML5
-CSS3
-JavaScript
-Responsive Web Design
-Backend / Database
-Supabase
-PostgreSQL
-Supabase Authentication
-Row Level Security
-Supabase REST API
-Deployment
-GitHub
-Vercel
-🚀 Local Setup
-
-Clone the repository:
-
+```bash
 git clone https://github.com/SanjaykumarBejjanki/Manasulo-Maata.git
+```
 
-Open the project:
+### 2. Open the Project
 
+```bash
 cd Manasulo-Maata
+```
 
-The public website can be opened through a local development server.
+### 3. Run the Website
 
-For example, using VS Code Live Server:
+The project is a frontend application and can be opened using a local development server.
 
+For example, using the VS Code Live Server extension:
+
+```text
 index.html
+```
 
-The admin dashboard is available through:
+The admin dashboard is available at:
 
+```text
 admin.html
-⚙️ Supabase Configuration
+```
 
-The frontend connects to the Supabase project using:
+---
 
+## ⚙️ Supabase Configuration
+
+The frontend connects to Supabase using the project URL and publishable key.
+
+Example:
+
+```javascript
 const SUPABASE_URL = "YOUR_SUPABASE_URL";
 const SUPABASE_KEY = "YOUR_PUBLISHABLE_KEY";
+```
 
-The project requires the appropriate Supabase database tables, authentication configuration, permissions, and RLS policies.
+For a complete setup, the Supabase project requires:
 
-🌐 Deployment
+* `submissions` table
+* `admins` table
+* Supabase Authentication
+* Row Level Security policies
+* Appropriate database permissions
+* Admin authorization function
 
-The project is deployed using Vercel and connected to the GitHub repository.
+> **Never commit Supabase secret/service-role keys to GitHub.**
 
-Public Website
+---
 
-Live Website:
+## 🌐 Deployment
 
-Manasulo Maata
+The project is deployed using **Vercel** and connected to the GitHub repository.
 
-Source Code
+### Public Website
 
-GitHub Repository
+**Live Website:**
+https://manasulo-maata.vercel.app/
 
-Admin Dashboard
+### Source Code
 
-The admin interface is maintained separately from the public user interface:
+**GitHub Repository:**
+https://github.com/SanjaykumarBejjanki/Manasulo-Maata
 
+### Admin Dashboard
+
+The admin interface is maintained separately from the public website:
+
+```text
 /admin.html
+```
 
-Access should be limited to authorized admin accounts through the authentication and database authorization system.
+Access to submission data is protected through Supabase Authentication and database authorization.
 
-🎨 Design Philosophy
+---
 
-Manasulo Maata follows a minimal, dark and emotional visual style.
+## 🎨 Design Philosophy
+
+Manasulo Maata follows a:
+
+* 🖤 Minimal
+* 🌑 Dark
+* ✨ Emotional
+* 📖 Personal
+* 📱 Mobile-friendly
+
+visual style.
 
 The design focuses on:
 
-Black / dark backgrounds
-Clean typography
-White readable text
-Subtle accent colors
-Emotional presentation
-Minimal distractions
-Mobile responsiveness
+* Dark backgrounds
+* Clean typography
+* Readable white text
+* Subtle accent colors
+* Emotional presentation
+* Minimal distractions
+* Responsive layouts
 
-The goal is to make the content feel personal rather than like generic motivational content.
+The goal is to make the platform feel personal and human rather than like a generic motivational quote page.
 
-💭 Core Concept
+---
 
-The platform is built around a simple idea:
+## 💭 Core Concept
 
+The platform is built around one simple idea:
+
+```text
 Real Situation
       ↓
 Real Feeling
@@ -305,64 +459,111 @@ Writer's Interpretation
 Original Quote
       ↓
 Instagram Post
+```
 
-The user's original submission is used as inspiration rather than simply copied as a public quote.
+The user's original submission is used as inspiration, while the final written expression is created in the Manasulo Maata writing style.
 
-📊 Admin Dashboard Pipeline
+---
+
+## 📊 Admin Dashboard Pipeline
 
 The dashboard provides a complete view of the content pipeline:
 
-                   ┌──────────────┐
-                   │  New         │
-                   └──────┬───────┘
-                          ↓
-                   ┌──────────────┐
-                   │  Selected    │
-                   └──────┬───────┘
-                          ↓
-                   ┌──────────────┐
-                   │  Writing     │
-                   └──────┬───────┘
-                          ↓
-                   ┌──────────────┐
-                   │  Written     │
-                   └──────┬───────┘
-                          ↓
-                ┌────────────────────┐
-                │ Instagram Ready    │
-                └─────────┬──────────┘
-                          ↓
-                   ┌──────────────┐
-                   │   Posted     │
-                   └──────────────┘
+```text
+              ┌──────────────┐
+              │     New      │
+              └──────┬───────┘
+                     ↓
+              ┌──────────────┐
+              │   Selected   │
+              └──────┬───────┘
+                     ↓
+              ┌──────────────┐
+              │   Writing    │
+              └──────┬───────┘
+                     ↓
+              ┌──────────────┐
+              │   Written    │
+              └──────┬───────┘
+                     ↓
+          ┌──────────────────────┐
+          │  Instagram Ready     │
+          └──────────┬───────────┘
+                     ↓
+              ┌──────────────┐
+              │    Posted    │
+              └──────────────┘
+```
 
 Rejected submissions are tracked separately.
 
-🔮 Future Improvements
+---
+
+## 🔮 Future Improvements
 
 Possible future enhancements include:
 
-Instagram API integration
-Automated post scheduling
-Admin role management
-Better session refresh handling
-Search functionality
-Advanced analytics
-Quote categories
-Submission pagination
-Image/post creation workflow
-Caption and hashtag management
-Post history
-Admin activity logs
+* 📸 Instagram API integration
+* ⏰ Automated post scheduling
+* 👥 Admin role management
+* 🔄 Improved session refresh handling
+* 🔎 Advanced search
+* 📊 Advanced analytics
+* 🏷️ Quote categories
+* 📄 Submission pagination
+* 🎨 Image/post creation workflow
+* ✍️ Caption and hashtag management
+* 📚 Post history
+* 📝 Admin activity logs
 
-These are future possibilities, not currently implemented features.
+These are future possibilities and are not currently implemented.
 
-👨‍💻 Author
+---
 
-Sanjay Kumar Bejjanki
+## 🎯 Project Goals
 
-AI & Machine Learning Enthusiast
+Manasulo Maata aims to build more than a quote page.
 
-GitHub:
+The long-term goal is to create a small community where people can:
 
-SanjaykumarBejjanki
+```text
+Feel something
+      ↓
+Share it
+      ↓
+See it understood
+      ↓
+Give it words
+```
+
+A person's real experience can become a piece of writing that another person may relate to.
+
+---
+
+## 👨‍💻 Author
+
+### Sanjay Kumar Bejjanki
+
+**AI & Machine Learning Enthusiast**
+
+Interested in:
+
+* Artificial Intelligence
+* Machine Learning
+* Data Analytics
+* Web Development
+* Creative Technology
+
+### GitHub
+
+**[SanjaykumarBejjanki](https://github.com/SanjaykumarBejjanki)**
+
+---
+
+> 🖤 **“Manasulo unna maatalaki oka roopam.”**
+
+---
+
+### ⭐ If you like the idea
+
+Feel free to explore the project, visit the website, and follow the development of **Manasulo Maata**.
